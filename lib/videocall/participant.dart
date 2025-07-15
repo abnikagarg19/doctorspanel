@@ -55,7 +55,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
         borderRadius: BorderRadius.circular(22),
       ),
       child: videoStream != null
-          ? RTCVideoView(
+          ? RTCVideoView(mirror: true,filterQuality: FilterQuality.high,
               videoStream?.renderer as RTCVideoRenderer,
               objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
             )

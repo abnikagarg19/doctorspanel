@@ -106,7 +106,7 @@ class DoctorJoinScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Dr Jana Joe',
+                          Text('Dr. Prashant\'s Clinic',
                               style: GoogleFonts.rubik(
                                 color: AppTheme.blackColor,
                                 fontSize: Constant.smallbody(context),
@@ -115,7 +115,7 @@ class DoctorJoinScreen extends StatelessWidget {
                           SizedBox(
                             height: 2,
                           ),
-                          Text('Cardiologist',
+                          Text('General Physician',
                               style: GoogleFonts.rubik(
                                 color: AppTheme.blackColor,
                                 fontSize: Constant.smallbody(context),
@@ -124,7 +124,7 @@ class DoctorJoinScreen extends StatelessWidget {
                           SizedBox(
                             height: 2,
                           ),
-                          Text("5 Appointments today",
+                          Text("1 Appointments today",
                               style: GoogleFonts.rubik(
                                 color: AppTheme.linkColor,
                                 fontSize: Constant.smallbody(context),
@@ -161,7 +161,7 @@ class DoctorJoinScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("aaaa",
+                              Text("Raj Kumar",
                                   style: GoogleFonts.rubik(
                                     color: AppTheme.blackColor,
                                     fontSize: Constant.smallbody(context),
@@ -189,16 +189,16 @@ class DoctorJoinScreen extends StatelessWidget {
                               )
                             ],
                           ),
-                          Text("ssss",
+                          Text("I have fever with cough , sneezing symptons",
                               style: GoogleFonts.rubik(
                                 color: AppTheme.blackColor,
                                 fontSize: Constant.smallbody(context),
                                 fontWeight: FontWeight.w400,
                               )),
                           SizedBox(
-                            height: 2,
+                            height: 4,
                           ),
-                          Text("sdjsj",
+                          Text("17 July 2025 , 2:00 pm",
                               style: GoogleFonts.rubik(
                                 color: AppTheme.linkColor,
                                 fontSize: Constant.smallbody(context),
