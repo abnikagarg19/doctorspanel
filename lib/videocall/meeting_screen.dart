@@ -72,8 +72,15 @@ class _MeetingScreenState extends State<MeetingScreen> {
     _room.leave();
     return true;
   }
-List tabsLIst=["Summary","Timeline","Concerns","Lab Results","Medications"];
-int selectTabs=0;
+
+  List tabsLIst = [
+    "Summary",
+    "Timeline",
+    "Concerns",
+    "Lab Results",
+    "Medications"
+  ];
+  int selectTabs = 0;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -109,14 +116,31 @@ int selectTabs=0;
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: ParticipantTile(
-                                key: Key(_room.localParticipant.id),
-                                participant: _room.localParticipant,
-                              ),
+                              child: participants.length > 1
+                                  ? ParticipantTile(
+                                      participant:
+                                          participants.values.firstWhere(
+                                        (p) =>
+                                            p.id != _room.localParticipant.id,
+                                        orElse: () => _room.localParticipant,
+                                      ),
+                                    )
+                                  : Container(
+                                      decoration: BoxDecoration(
+                                          color: AppTheme.blackColor),
+                                      child: Center(
+                                          child: Text("Waiting for join...",
+                                              style: GoogleFonts.rubik(
+                                                  color: AppTheme
+                                                      .whiteBackgroundColor,
+                                                  fontSize: 12,
+                                                  fontWeight:
+                                                      FontWeight.w500))),
+                                    ),
                             ),
                           ),
 
-                          if (participants.length > 1)
+                         // if (participants.length > 1)
                             Positioned(
                               top: 16,
                               left: 16,
@@ -130,15 +154,37 @@ int selectTabs=0;
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: ParticipantTile(
-                                    participant: participants.values.firstWhere(
-                                      (p) => p.id != _room.localParticipant.id,
-                                      orElse: () => _room.localParticipant,
-                                    ),
+                                    key: Key(_room.localParticipant.id),
+                                    participant: _room.localParticipant,
                                     smallView: true,
                                   ),
                                 ),
                               ),
                             ),
+                          // else
+                          //   Positioned(
+                          //     top: 16,
+                          //     left: 16,
+                          //     child: ClipRRect(
+                          //       borderRadius: BorderRadius.circular(12),
+                          //       child: Container(
+                          //           width: 150,
+                          //           height: 180,
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.black,
+                          //             border: Border.all(
+                          //                 color: AppTheme.backGround),
+                          //             borderRadius: BorderRadius.circular(12),
+                          //           ),
+                          //           child: Center(
+                          //               child: Text("No Video",
+                          //                   style: GoogleFonts.rubik(
+                          //                       color: AppTheme
+                          //                           .whiteBackgroundColor,
+                          //                       fontSize: 12,
+                          //                       fontWeight: FontWeight.w500)))),
+                          //     ),
+                          //   ),
                           Positioned(
                               top: 16,
                               right: 16,
@@ -170,7 +216,8 @@ int selectTabs=0;
                                         ),
                                         Text("100",
                                             style: GoogleFonts.rubik(
-                                                color: Color.fromRGBO(237, 70, 57, 1),
+                                                color: Color.fromRGBO(
+                                                    237, 70, 57, 1),
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500)),
                                       ],
@@ -179,7 +226,8 @@ int selectTabs=0;
                                   SizedBox(
                                     height: 12,
                                   ),
-                                  Container( width: 100,
+                                  Container(
+                                    width: 100,
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     decoration: BoxDecoration(
@@ -204,7 +252,8 @@ int selectTabs=0;
                                         ),
                                         Text("76 BPM",
                                             style: GoogleFonts.rubik(
-                                                color: Color.fromRGBO(54, 166, 29, 1),
+                                                color: Color.fromRGBO(
+                                                    54, 166, 29, 1),
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500)),
                                       ],
@@ -213,7 +262,8 @@ int selectTabs=0;
                                   SizedBox(
                                     height: 12,
                                   ),
-                                  Container( width: 100,
+                                  Container(
+                                    width: 100,
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     decoration: BoxDecoration(
@@ -236,9 +286,10 @@ int selectTabs=0;
                                         SizedBox(
                                           height: 6,
                                         ),
-                                         Text("76 %",
+                                        Text("76 %",
                                             style: GoogleFonts.rubik(
-                                                color: Color.fromRGBO(54, 166, 29, 1),
+                                                color: Color.fromRGBO(
+                                                    54, 166, 29, 1),
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500)),
                                       ],
@@ -247,15 +298,19 @@ int selectTabs=0;
                                   SizedBox(
                                     height: 12,
                                   ),
-                                  Container( width: 100,
+                                  Container(
+                                    width: 100,
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         color:
                                             Color.fromRGBO(244, 244, 244, 0.7)),
-                                    child: Column(crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Image.asset(
                                           "assets/images/BP (1).png",
@@ -263,81 +318,99 @@ int selectTabs=0;
                                         SizedBox(
                                           height: 6,
                                         ),
-                                        Row(  mainAxisAlignment: MainAxisAlignment.center,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text("120",
                                                 style: GoogleFonts.rubik(
-                                                     color: Color.fromRGBO(54, 166, 29, 1),
+                                                    color: Color.fromRGBO(
+                                                        54, 166, 29, 1),
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.w600)),
+                                                    fontWeight:
+                                                        FontWeight.w600)),
                                             SizedBox(
                                               width: 6,
                                             ),
                                             Text("SYS",
                                                 style: GoogleFonts.rubik(
-                                                     color: AppTheme.blackColor,
+                                                    color: AppTheme.blackColor,
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.w600)),
+                                                    fontWeight:
+                                                        FontWeight.w600)),
                                           ],
                                         ),
-                                         SizedBox(
+                                        SizedBox(
                                           height: 6,
                                         ),
-                                        Row(  mainAxisAlignment: MainAxisAlignment.center,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text("60",
                                                 style: GoogleFonts.rubik(
-                                                     color: Color.fromRGBO(54, 166, 29, 1),
+                                                    color: Color.fromRGBO(
+                                                        54, 166, 29, 1),
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.w600)),
+                                                    fontWeight:
+                                                        FontWeight.w600)),
                                             SizedBox(
                                               width: 6,
                                             ),
                                             Text("DIA",
                                                 style: GoogleFonts.rubik(
-                                                     color: AppTheme.blackColor,
+                                                    color: AppTheme.blackColor,
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.w600)),
+                                                    fontWeight:
+                                                        FontWeight.w600)),
                                           ],
                                         ),
                                       ],
                                     ),
                                   ),
-                                   SizedBox(
+                                  SizedBox(
                                     height: 12,
                                   ),
-                                  Container( width: 100,
+                                  Container(
+                                    width: 100,
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         color:
                                             Color.fromRGBO(244, 244, 244, 0.7)),
-                                    child: Column(crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                       
-                                        Row(  mainAxisAlignment: MainAxisAlignment.center,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text("Blood\nSugar",
                                                 style: GoogleFonts.rubik(
                                                     color: AppTheme.blackColor,
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.w400)),
-                                          
+                                                    fontWeight:
+                                                        FontWeight.w400)),
                                           ],
                                         ),
-                                         SizedBox(
+                                        SizedBox(
                                           height: 6,
                                         ),
-                                        Row(  mainAxisAlignment: MainAxisAlignment.center,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text("140mg/dL",
                                                 style: GoogleFonts.rubik(
-                                                     color: Color.fromRGBO(54, 166, 29, 1),
+                                                    color: Color.fromRGBO(
+                                                        54, 166, 29, 1),
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.w600)),
-                                           
+                                                    fontWeight:
+                                                        FontWeight.w600)),
                                           ],
                                         ),
                                       ],
@@ -349,7 +422,6 @@ int selectTabs=0;
                           Positioned(
                             bottom: 20,
                             left: 20,
-                         
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -454,13 +526,15 @@ int selectTabs=0;
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  selectTabs=index;
+                                  selectTabs = index;
                                 });
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
-                                    color:selectTabs==index?Color.fromRGBO(60, 150, 255, 1): AppTheme.whiteTextColor,
+                                    color: selectTabs == index
+                                        ? Color.fromRGBO(60, 150, 255, 1)
+                                        : AppTheme.whiteTextColor,
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color.fromARGB(
@@ -477,8 +551,10 @@ int selectTabs=0;
                                 child: Center(
                                   child: Text("${tabsLIst[index]}",
                                       style: GoogleFonts.rubik(
-                                           color:selectTabs==index?Color.fromRGBO(255, 255, 255, 1): Color.fromRGBO(142, 142, 142, 1),
-                                       
+                                          color: selectTabs == index
+                                              ? Color.fromRGBO(255, 255, 255, 1)
+                                              : Color.fromRGBO(
+                                                  142, 142, 142, 1),
                                           fontSize:
                                               Constant.verysmallbody(context),
                                           fontWeight: FontWeight.w500)),
@@ -513,7 +589,7 @@ int selectTabs=0;
                                       mainAxisAlignment:
                                           MainAxisAlignment.start,
                                       children: [
-                                        Text("Patient name: John Smith",
+                                        Text("Patient name: Raj Kumar",
                                             style: GoogleFonts.rubik(
                                                 color: AppTheme.blackColor,
                                                 fontSize: Constant.twetysixtext(
@@ -523,7 +599,7 @@ int selectTabs=0;
                                           height: 20,
                                         ),
                                         Text(
-                                            "23y old female patient presents with a mild-grade febrile illness accompanied by a productive cough yielding white, odorless, non-blood-tinged sputum. Symptoms have been gradual in onset, with no associated chills, dyspnea, chest pain, or systemic complaints. There is no past medical history suggestive of diabetes, hypertension, thyroid dysfunction, or tuberculosis. Personal and lifestyle history are unremarkable.",
+                                            "23y old male patient presents with a mild-grade febrile illness accompanied by a productive cough yielding white, odorless, non-blood-tinged sputum. Symptoms have been gradual in onset, with no associated chills, dyspnea, chest pain, or systemic complaints. There is no past medical history suggestive of diabetes, hypertension, thyroid dysfunction, or tuberculosis. Personal and lifestyle history are unremarkable.",
                                             style: GoogleFonts.quicksand(
                                                 color: AppTheme.blackColor,
                                                 fontSize: 12,
@@ -544,7 +620,14 @@ int selectTabs=0;
                                           height: 10,
                                         ),
                                         Text(
-                                            "23y old female patient presents with a mild-grade febrile illness accompanied by a productive cough yielding white, odorless, non-blood-tinged sputum. Symptoms have been gradual in onset, with no associated chills, dyspnea, chest pain, or systemic complaints. There is no past medical history suggestive of diabetes, hypertension, thyroid dysfunction, or tuberculosis. Personal and lifestyle history are unremarkable.",
+                                            """Pain: A headache, back pain, stomachache.
+Fatigue: Feeling unusually tired or weak.
+Nausea: Feeling sick to your stomach, with an urge to vomit.
+Fever: An elevated body temperature.
+Muscle aches: Pain or soreness in the muscles.
+Coughing: A reflex action to clear the airways.
+Night sweats: Excessive sweating during sleep.
+""",
                                             style: GoogleFonts.quicksand(
                                                 color: AppTheme.blackColor,
                                                 fontSize: 12,

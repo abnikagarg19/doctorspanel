@@ -21,13 +21,13 @@ class _ParticipantTileState extends State<ParticipantTile> {
   @override
   void initState() {
     super.initState();
-    widget.participant.streams.forEach((key, Stream stream) {
-      if (stream.kind == 'video') {
-        setState(() {
-          videoStream = stream;
-        });
-      }
-    });
+    // widget.participant.streams.forEach((key, Stream stream) {
+    //   if (stream.kind == 'video') {
+    //     setState(() {
+    //       videoStream = stream;
+    //     });
+    //   }
+    // });
     _initStreamListeners();
   }
 
