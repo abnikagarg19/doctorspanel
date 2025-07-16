@@ -32,6 +32,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
   }
 
   void _initStreamListeners() {
+    widget.participant.unmuteMic();
     widget.participant.on(Events.streamEnabled, (Stream stream) {
       if (stream.kind == 'video') {
         setState(() => videoStream = stream);
@@ -57,6 +58,7 @@ class _ParticipantTileState extends State<ParticipantTile> {
       child: videoStream != null
           ? RTCVideoView(mirror: true,filterQuality: FilterQuality.high,
               videoStream?.renderer as RTCVideoRenderer,
+
               objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
             )
           : const Center(

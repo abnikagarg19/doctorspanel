@@ -117,7 +117,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: participants.length > 1
-                                  ? ParticipantTile(
+                                  ? ParticipantTile( 
                                       participant:
                                           participants.values.firstWhere(
                                         (p) =>
