@@ -116,7 +116,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: participants.length > 0
+                              child: participants.length > 1
                                   ? ParticipantTile(
                                       participant:
                                           participants.values.firstWhere(
