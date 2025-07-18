@@ -41,20 +41,28 @@ class _MeetingScreenState extends State<MeetingScreen> {
     );
 
     setMeetingEventListener();
-    _room.join();
+// _room.join();
   }
 
   void setMeetingEventListener() {
-    _room.on(Events.roomJoined, () {
-      setState(() {
-        participants[_room.localParticipant.id] = _room.localParticipant;
-      });
-    });
+  _room.on(Events.roomJoined, () {
+  setState(() {
+    participants[_room.localParticipant.id] = _room.localParticipant;
+  });
 
-    _room.on(Events.participantJoined, (Participant participant) {
+  // 🔁 Listen to own stream updates (optional)
+  _room.localParticipant.on(Events.streamEnabled, (Stream stream) {
+    setState(() {});
+  });
+});
+
+     _room.on(Events.participantJoined, (Participant participant) {
       setState(() {
         participants[participant.id] = participant;
       });
+
+      participant.on(Events.streamEnabled, (_) => setState(() {}));
+      participant.on(Events.streamDisabled, (_) => setState(() {}));
     });
 
     _room.on(Events.participantLeft, (String participantId) {
@@ -67,6 +75,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
       participants.clear();
       Navigator.pop(context);
     });
+
+    _room.join();
   }
 
   Future<bool> _onWillPop() async {
@@ -84,6 +94,11 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int selectTabs = 0;
   @override
   Widget build(BuildContext context) {
+     final local = _room.localParticipant;
+    final remoteParticipants = participants.values
+        .where((p) => p.id != local.id)
+        .toList();
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return WillPopScope(
@@ -140,13 +155,13 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                 
                                   ParticipantTile(
                                         key: Key(_room.localParticipant.id),
-                                        participant: _room.localParticipant,
+                                        participant: local,
                                       ),
                                     
                             ),
                           ),
 
-                           if (participants.length > 1)
+                         if (remoteParticipants.isNotEmpty)
                           Positioned(
                             top: 16,
                             left: 16,
@@ -160,10 +175,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: ParticipantTile(
-                                  participant: participants.values.firstWhere(
-                                    (p) => p.id != _room.localParticipant.id,
-                                    orElse: () => _room.localParticipant,
-                                  ),
+                                   participant: remoteParticipants.first,
                                   smallView: true,
                                 ),
                               ),
