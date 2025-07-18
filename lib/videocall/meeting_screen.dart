@@ -36,7 +36,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
       token: widget.token,
       displayName: "Doctor",
       micEnabled: micEnabled,
-      defaultCameraIndex: 1,
+      defaultCameraIndex: 0,
       camEnabled: camEnabled,
     );
 
@@ -45,21 +45,22 @@ class _MeetingScreenState extends State<MeetingScreen> {
   }
 
   void setMeetingEventListener() {
-  _room.on(Events.roomJoined, () {
-  setState(() {
-    participants[_room.localParticipant.id] = _room.localParticipant;
-  });
+    _room.on(Events.roomJoined, () {
+      setState(() {
+        participants[_room.localParticipant.id] = _room.localParticipant;
+      });
 
-  // 🔁 Listen to own stream updates (optional)
-  _room.localParticipant.on(Events.streamEnabled, (Stream stream) {
-    setState(() {});
-  });
-});
+      // 🔁 Listen to own stream updates (optional)
+      _room.localParticipant.on(Events.streamEnabled, (Stream stream) {
+        setState(() {});
+      });
+    });
 
-     _room.on(Events.participantJoined, (Participant participant) {
+    _room.on(Events.participantJoined, (Participant participant) {
       setState(() {
         participants[participant.id] = participant;
       });
+print("Has Video: ${participant.enableCam()}");
 
       participant.on(Events.streamEnabled, (_) => setState(() {}));
       participant.on(Events.streamDisabled, (_) => setState(() {}));
@@ -94,10 +95,9 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int selectTabs = 0;
   @override
   Widget build(BuildContext context) {
-     final local = _room.localParticipant;
-    final remoteParticipants = participants.values
-        .where((p) => p.id != local.id)
-        .toList();
+    final local = _room.localParticipant;
+    final remoteParticipants =
+        participants.values.where((p) => p.id != local.id).toList();
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -132,14 +132,14 @@ class _MeetingScreenState extends State<MeetingScreen> {
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child:// participants.length > 1
+                              child: // participants.length > 1
                                   // ? Positioned.fill(
                                   //     child: ParticipantTile(
                                   //       key: Key(_room.localParticipant.id),
                                   //       participant: _room.localParticipant,
                                   //     ),
                                   //   )
-                                  // : 
+                                  // :
                                   // Container(
                                   //     decoration: BoxDecoration(
                                   //         color: AppTheme.blackColor),
@@ -152,35 +152,34 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                   //                 fontWeight:
                                   //                     FontWeight.w500))),
                                   //   ),
-                                
+
                                   ParticipantTile(
-                                        key: Key(_room.localParticipant.id),
-                                        participant: local,
-                                      ),
-                                    
+                                key: Key(_room.localParticipant.id),
+                                participant: local,
+                              ),
                             ),
                           ),
 
-                         if (remoteParticipants.isNotEmpty)
-                          Positioned(
-                            top: 16,
-                            left: 16,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                width: 150,
-                                height: 180,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: ParticipantTile(
-                                   participant: remoteParticipants.first,
-                                  smallView: true,
+                          if (remoteParticipants.isNotEmpty)
+                            Positioned(
+                              top: 16,
+                              left: 16,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  width: 150,
+                                  height: 180,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: ParticipantTile(
+                                    participant: remoteParticipants.first,
+                                    smallView: true,
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
+                            )
                           else
                             Positioned(
                               top: 16,
