@@ -59,16 +59,16 @@ class DoctorJoinScreen extends StatelessWidget {
           title: const Text('Doctor’s Dashboard'),
           titleSpacing: 30,
           centerTitle: false,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: SvgPicture.asset("assets/svg/cross.svg")),
-            ),
-          ],
+          // actions: [
+          //   Padding(
+          //     padding: const EdgeInsets.only(right: 20),
+          //     child: GestureDetector(
+          //         onTap: () {
+          //           Get.back();
+          //         },
+          //         child: SvgPicture.asset("assets/svg/cross.svg")),
+          //   ),
+          // ],
         ),
         body: GetBuilder<Doctorcontroller>(builder: (controller) {
             return SingleChildScrollView(

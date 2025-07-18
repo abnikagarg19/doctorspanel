@@ -9,7 +9,7 @@ class Doctorcontroller extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    getMeeting();
+   //getMeeting();
     // update();
     //print(parameters["pageIndex"]);
   }
