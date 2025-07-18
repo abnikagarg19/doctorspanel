@@ -36,6 +36,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
       token: widget.token,
       displayName: "Doctor",
       micEnabled: micEnabled,
+      defaultCameraIndex: 1,
       camEnabled: camEnabled,
     );
 
@@ -116,75 +117,82 @@ class _MeetingScreenState extends State<MeetingScreen> {
                           Positioned.fill(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
-                              child: participants.length > 1
-                                  ? ParticipantTile( 
-                                      participant:
-                                          participants.values.firstWhere(
-                                        (p) =>
-                                            p.id != _room.localParticipant.id,
-                                        orElse: () => _room.localParticipant,
+                              child:// participants.length > 1
+                                  // ? Positioned.fill(
+                                  //     child: ParticipantTile(
+                                  //       key: Key(_room.localParticipant.id),
+                                  //       participant: _room.localParticipant,
+                                  //     ),
+                                  //   )
+                                  // : 
+                                  // Container(
+                                  //     decoration: BoxDecoration(
+                                  //         color: AppTheme.blackColor),
+                                  //     child: Center(
+                                  //         child: Text("Waiting for join...",
+                                  //             style: GoogleFonts.rubik(
+                                  //                 color: AppTheme
+                                  //                     .whiteBackgroundColor,
+                                  //                 fontSize: 12,
+                                  //                 fontWeight:
+                                  //                     FontWeight.w500))),
+                                  //   ),
+                                
+                                  ParticipantTile(
+                                        key: Key(_room.localParticipant.id),
+                                        participant: _room.localParticipant,
                                       ),
-                                    )
-                                  : Container(
-                                      decoration: BoxDecoration(
-                                          color: AppTheme.blackColor),
-                                      child: Center(
-                                          child: Text("Waiting for join...",
-                                              style: GoogleFonts.rubik(
-                                                  color: AppTheme
-                                                      .whiteBackgroundColor,
-                                                  fontSize: 12,
-                                                  fontWeight:
-                                                      FontWeight.w500))),
-                                    ),
+                                    
                             ),
                           ),
 
-                         // if (participants.length > 1)
+                           if (participants.length > 1)
+                          Positioned(
+                            top: 16,
+                            left: 16,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                width: 150,
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: ParticipantTile(
+                                  participant: participants.values.firstWhere(
+                                    (p) => p.id != _room.localParticipant.id,
+                                    orElse: () => _room.localParticipant,
+                                  ),
+                                  smallView: true,
+                                ),
+                              ),
+                            ),
+                          )
+                          else
                             Positioned(
                               top: 16,
                               left: 16,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Container(
-                                  width: 150,
-                                  height: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: ParticipantTile(
-                                    key: Key(_room.localParticipant.id),
-                                    participant: _room.localParticipant,
-                                    smallView: true,
-                                  ),
-                                ),
+                                    width: 150,
+                                    height: 180,
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      border: Border.all(
+                                          color: AppTheme.backGround),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                        child: Text("No Video",
+                                            style: GoogleFonts.rubik(
+                                                color: AppTheme
+                                                    .whiteBackgroundColor,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500)))),
                               ),
                             ),
-                          // else
-                          //   Positioned(
-                          //     top: 16,
-                          //     left: 16,
-                          //     child: ClipRRect(
-                          //       borderRadius: BorderRadius.circular(12),
-                          //       child: Container(
-                          //           width: 150,
-                          //           height: 180,
-                          //           decoration: BoxDecoration(
-                          //             color: Colors.black,
-                          //             border: Border.all(
-                          //                 color: AppTheme.backGround),
-                          //             borderRadius: BorderRadius.circular(12),
-                          //           ),
-                          //           child: Center(
-                          //               child: Text("No Video",
-                          //                   style: GoogleFonts.rubik(
-                          //                       color: AppTheme
-                          //                           .whiteBackgroundColor,
-                          //                       fontSize: 12,
-                          //                       fontWeight: FontWeight.w500)))),
-                          //     ),
-                          //   ),
                           Positioned(
                               top: 16,
                               right: 16,
