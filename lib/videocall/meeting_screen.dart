@@ -507,7 +507,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                 }
                                 return null;
                               },
-                              maxLines: 6,
+                              maxLines: 8,
                               maxlength: 1000,
                             ),
                           ),
@@ -517,7 +517,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                           Expanded(
                             child: InputTextFieldMaxlines(
                               //  textEditingController: _controller.body1,
-                              hintText: "Complete transcribe:",
+                              hintText: "Complete Summary:",
                               counterText: "1000",
 
                               validation: (value) {
@@ -526,7 +526,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                 }
                                 return null;
                               },
-                              maxLines: 6,
+                              maxLines: 8,
                               maxlength: 1000,
                             ),
                           ),
@@ -536,8 +536,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   ),
                 ),
 
-                if (constraints.maxWidth > 1000) const SizedBox(width: 20),
-                if (constraints.maxWidth > 1000) Expanded(
+                if (constraints.maxHeight < constraints.maxWidth) const SizedBox(width: 20),
+                if (constraints.maxHeight < constraints.maxWidth) Expanded(
                   flex: 5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
