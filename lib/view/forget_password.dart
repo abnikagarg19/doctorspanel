@@ -25,7 +25,7 @@ class ForgetPassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(body: GetBuilder<AuthController>(builder: (_controller) {
       return  LayoutBuilder(
-          // If our width is more than 1100 then we consider it a desktop
+          // If our width is more than  1100 then we consider it a desktop
           builder: (context, constraints) {
           return Stack(
             children: [
