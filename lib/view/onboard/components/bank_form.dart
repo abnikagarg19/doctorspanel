@@ -6,8 +6,8 @@ import '../../../theme/apptheme.dart';
 import 'label_common.dart';
 import 'package:intl/intl.dart';
 
-class PersonalForm extends StatelessWidget {
-  const PersonalForm({
+class BankingForm extends StatelessWidget {
+  const BankingForm({
     super.key,
     required this.controller,
   });
@@ -19,12 +19,12 @@ class PersonalForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          buildLable(context, "Full Name (as per medical registration)"),
+          buildLable(context, "Account Holder Name"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.nameController,
+              textEditingController: controller.accHolderController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
@@ -32,138 +32,110 @@ class PersonalForm extends StatelessWidget {
                 }
                 return null;
               },
-              hintText: "Enter your name",
+              hintText: "Enter your account no.",
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Date of Birth"),
+          buildLable(context,
+              "Bank Name & Branch"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.dobController,
+              textEditingController: controller.bankNameController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              readOnly: true,
-              ontap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1947),
-                  lastDate: DateTime(2030),
-                );
-
-                if (pickedDate != null) {
-                  print(pickedDate);
-                  String formattedDate = DateFormat(
-                    'dd/MMM/yyyy',
-                  ).format(pickedDate);
-                  print(formattedDate);
-                  controller.dobController.text =
-                      formattedDate; //set output date to TextField value.
-                } else {
-                  print("end from date is not selected");
-                }
-              },
-              hintText: 'dd/MMM/yyyy',
+              hintText: 'Enter your bank branch',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Gender"),
-          SizedBox(
-            height: 8,
-          ),
-          ReusableDropdown(
-            /// items: controller.genderOptions,
-            listmap: controller.genderOptions,
-
-            selectedItem: "",
-            onChanged: (newValue) {
-              // setState(() {
-              // controller.selectedValue = newValue!;
-              // });
-            },
-            //  validation: (value) {
-            //       if (value == null || value.isEmpty) {
-            //         return 'Required';
-            //       }
-            //       return null;
-            //     },
-            hintText: 'Choose One',
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          buildLable(context, "Mobile Number (with OTP verification)"),
+          buildLable(context, "Account Number"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.mobileController,
+              textEditingController: controller.accNumberController,
+              hintText: 'Enter the A/c number',
+               validation: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Required';
+                }
+                return null;
+              },
+              color: const Color(0xff585A60)),
+          SizedBox(
+            height: 20,
+          ),
+          buildLable(context, "IFSC Code"),
+          SizedBox(
+            height: 8,
+          ),
+          MyTextField(
+              textEditingController: controller.ifscController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              hintText: 'Enter your number',
+              hintText: 'Enter the code',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Emergency Contact (optional)"),
+          buildLable(context, "PAN Card Number (for TDS compliance)"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.emergencyContactController,
+              textEditingController: controller.panCardController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              hintText: 'Enter your number',
+              hintText: 'Enter the PAN number ',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Email Address (with OTP verification)"),
+          buildLable(context, "GSTIN (if applicable)"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.emailController,
+              textEditingController: controller.gstinController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              hintText: 'Enter your email',
+              hintText: 'Enter the number',
               color: const Color(0xff585A60)),
-          SizedBox(
+               SizedBox(
             height: 20,
           ),
-          buildLable(context, "Address"),
+          buildLable(context, "UPI ID (For faster payouts)"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.addressController,
+              textEditingController: controller.upiIdController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              hintText: 'Enter your  address',
+              hintText: 'Enter the UPI ID',
               color: const Color(0xff585A60)),
         ],
       ),

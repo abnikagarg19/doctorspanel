@@ -75,7 +75,7 @@ class MyTextField extends StatelessWidget {
               // fillColor: Color.fromRGBO(255, 255, 255, 0.6),
               // filled: isfilled, 
               hintStyle: GoogleFonts.rubik(
-                  fontSize: Constant.mediumbody(context),
+                  fontSize: Constant.smallbody(context),
                   color: AppTheme.lightHintTextColor,
                   fontWeight: FontWeight.w400),
               enabledBorder: OutlineInputBorder(
@@ -100,7 +100,7 @@ class MyTextField extends StatelessWidget {
               // filled: true,
               //  fillColor: Colors.white,
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  EdgeInsets.symmetric(horizontal: 20, vertical: 22),
               hintText: hintText,
               floatingLabelStyle: GoogleFonts.rubik(
                   fontSize: Constant.largeBody(context),

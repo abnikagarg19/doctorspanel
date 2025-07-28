@@ -6,8 +6,8 @@ import '../../../theme/apptheme.dart';
 import 'label_common.dart';
 import 'package:intl/intl.dart';
 
-class PersonalForm extends StatelessWidget {
-  const PersonalForm({
+class ExperienceForm extends StatelessWidget {
+  const ExperienceForm({
     super.key,
     required this.controller,
   });
@@ -19,12 +19,12 @@ class PersonalForm extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          buildLable(context, "Full Name (as per medical registration)"),
+          buildLable(context, "Years of Practice"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.nameController,
+              textEditingController: controller.yearOfPracticeController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
@@ -32,92 +32,41 @@ class PersonalForm extends StatelessWidget {
                 }
                 return null;
               },
-              hintText: "Enter your name",
+              hintText: "Enter your answer",
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Date of Birth"),
+          buildLable(context,
+              "Primary Specialization (e.g., General Medicine, Pediatrics)"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.dobController,
+              textEditingController: controller.specializationController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              readOnly: true,
-              ontap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1947),
-                  lastDate: DateTime(2030),
-                );
-
-                if (pickedDate != null) {
-                  print(pickedDate);
-                  String formattedDate = DateFormat(
-                    'dd/MMM/yyyy',
-                  ).format(pickedDate);
-                  print(formattedDate);
-                  controller.dobController.text =
-                      formattedDate; //set output date to TextField value.
-                } else {
-                  print("end from date is not selected");
-                }
-              },
-              hintText: 'dd/MMM/yyyy',
+              hintText: 'Enter your specialization',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Gender"),
-          SizedBox(
-            height: 8,
-          ),
-          ReusableDropdown(
-            /// items: controller.genderOptions,
-            listmap: controller.genderOptions,
-
-            selectedItem: "",
-            onChanged: (newValue) {
-              // setState(() {
-              // controller.selectedValue = newValue!;
-              // });
-            },
-            //  validation: (value) {
-            //       if (value == null || value.isEmpty) {
-            //         return 'Required';
-            //       }
-            //       return null;
-            //     },
-            hintText: 'Choose One',
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          buildLable(context, "Mobile Number (with OTP verification)"),
+          buildLable(context, "Sub-specializations (if any)"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.mobileController,
-              validation: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Required';
-                }
-                return null;
-              },
-              hintText: 'Enter your number',
+              textEditingController: controller.subspecialtiesController,
+              hintText: 'Enter if any',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Emergency Contact (optional)"),
+          buildLable(context, "Previous Hospitals / Clinics worked at"),
           SizedBox(
             height: 8,
           ),
@@ -129,12 +78,12 @@ class PersonalForm extends StatelessWidget {
                 }
                 return null;
               },
-              hintText: 'Enter your number',
+              hintText: 'Add all the places',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Email Address (with OTP verification)"),
+          buildLable(context, "Languages Spoken"),
           SizedBox(
             height: 8,
           ),
@@ -146,24 +95,24 @@ class PersonalForm extends StatelessWidget {
                 }
                 return null;
               },
-              hintText: 'Enter your email',
+              hintText: 'Enter the languages',
               color: const Color(0xff585A60)),
           SizedBox(
             height: 20,
           ),
-          buildLable(context, "Address"),
+          buildLable(context, "Short Bio / Introduction"),
           SizedBox(
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.addressController,
+              textEditingController: controller.shortBioController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
-              hintText: 'Enter your  address',
+              hintText: 'Type a short intro within 200 words',
               color: const Color(0xff585A60)),
         ],
       ),

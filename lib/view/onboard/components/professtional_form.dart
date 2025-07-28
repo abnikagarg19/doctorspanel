@@ -25,7 +25,7 @@ class ProfesstionalForm extends StatelessWidget {
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.email,
+              textEditingController: controller.medicalRegNoController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
@@ -44,7 +44,7 @@ class ProfesstionalForm extends StatelessWidget {
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.password,
+              textEditingController: controller.medicalCouncilController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
@@ -62,7 +62,7 @@ class ProfesstionalForm extends StatelessWidget {
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.password,
+              textEditingController: controller.stateOfRegController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
@@ -83,13 +83,18 @@ class ProfesstionalForm extends StatelessWidget {
             height: 8,
           ),
           MyTextField(
-              textEditingController: controller.password,
+              textEditingController: controller.yearOfRegController,
               validation: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Required';
                 }
                 return null;
               },
+              readOnly: true,
+              ontap: () {
+                // Call this in the select year button.
+
+             },
               hintText: 'YYYY',
               color: const Color(0xff585A60)),
           SizedBox(
@@ -171,7 +176,8 @@ class ProfesstionalForm extends StatelessWidget {
                   fontSize: Constant.verysmallbody(context),
                   fontWeight: FontWeight.w300,
                 )),
-          ),SizedBox(
+          ),
+          SizedBox(
             height: 20,
           ),
           buildLable(context, "Signature Scan"),

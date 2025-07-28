@@ -18,8 +18,75 @@ class SignUpController extends GetxController {
   List onBoard = [
     "1. Personal & Contact Information",
     "2. Professional Credentials",
-    "3. Experience & Specialization"
+    "3. Experience & Specialization",
+    "4. Consultation Preferences",
+    "5. Banking & Payments (for payouts)",
+    "6. Other (Optional but Useful) "
   ];
+  // Personal Info
+  final nameController = TextEditingController();
+  final dobController = TextEditingController();
+  List<String> genderOptions = ["Male", "Female", "Other"];
+  final genderController = TextEditingController();
+  final mobileController = TextEditingController();
+  final emailController = TextEditingController();
+  final addressController = TextEditingController();
+  final emergencyContactController = TextEditingController();
+
+  // Registration
+  final medicalRegNoController = TextEditingController();
+  final medicalCouncilController = TextEditingController();
+  final stateOfRegController = TextEditingController();
+  final yearOfRegController = TextEditingController();
+
+  // Experience
+  final yearOfPracticeController = TextEditingController();
+  final specializationController = TextEditingController();
+  final subspecialtiesController = TextEditingController();
+  final previousCompanyController = TextEditingController();
+  final shortBioController = TextEditingController();
+  List selectedLanguages = [];
+  final List languageOptions = ["English", "French", "Hindi", "Tamil"];
+
+  // Availability
+  List<String> selectedDays = [];
+  final List<String> allDays = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+  final availableFromController = TextEditingController();
+  final availableToController = TextEditingController();
+  final consultationDurationController = TextEditingController();
+  final consultationFeeController = TextEditingController();
+  List selectedModes = [];
+  final List modeOptions = ["Online", "Chat", "Offline"];
+  bool emergencyAvailable = false;
+
+  // Bank Details
+  final accHolderController = TextEditingController();
+  final bankNameController = TextEditingController();
+  final accNumberController = TextEditingController();
+  final ifscController = TextEditingController();
+  final panCardController = TextEditingController();
+  final gstinController = TextEditingController();
+  final upiIdController = TextEditingController();
+
+  // Consent
+  bool telemedGuidelines = false;
+  bool termsCondition = false;
+  final publicationsController = TextEditingController();
+  final linkedinController = TextEditingController();
+  bool consentTelconsult = false;
+  final refDocController = TextEditingController();
+  final digitalSignatureController = TextEditingController();
+  final profWebsiteController = TextEditingController();
+  bool malpracticeInsurance = false;
+  final awardController = TextEditingController();
   bool isRemember = false;
   var passwordLoginVisibility = false;
   void showPassword() {
@@ -34,10 +101,84 @@ class SignUpController extends GetxController {
   }
 
   final service = AuthService();
-  int selectedIndex = 0;
-  onChangeIndex(index) {
-    selectedIndex = index;
-    update();
+  int currentStep = 0;
+
+  void goToNextStep() {
+    if (currentStep < 6) {
+      currentStep++;
+      update();
+    } else {
+      DialogHelper.showErroDialog(
+        description: "Family Head added Successfully",
+      );
+    }
+  }
+
+  void goToPreviousStep() {
+    if (currentStep > 0) {
+      currentStep--;
+      update();
+    } else {
+      final Map<String, dynamic> json = {
+        "personal_info": {
+          "name": nameController.text,
+          "date_of_birth": dobController.text,
+          "gender": genderController.text,
+          "mobile_number": mobileController.text,
+          "email": emailController.text,
+          "address": addressController.text,
+          "emergency_contact": emergencyContactController.text,
+        },
+        "registration": {
+          "medical_reg_no": medicalCouncilController.text,
+          "medical_council": medicalCouncilController.text,
+          "state_of_reg": stateOfRegController.text,
+          "year_of_reg": int.tryParse(yearOfRegController.text) ?? 0,
+        },
+        "experience": {
+          "year_of_practice": int.tryParse(yearOfPracticeController.text) ?? 0,
+          "specialization": specializationController.text,
+          "subspecialties": subspecialtiesController.text,
+          "previous_company_name": previousCompanyController.text,
+          "language_spoken": selectedLanguages,
+          "short_bio": shortBioController.text,
+        },
+        "availability": {
+          "available_days": selectedDays,
+          "available_from_time": availableFromController.text,
+          "available_to_time": availableToController.text,
+          "consultation_duration": consultationDurationController.text,
+          "consultation_mode": selectedModes,
+          "consultation_fee": int.tryParse(consultationFeeController.text) ?? 0,
+          "emergency_consultation_available": emergencyAvailable,
+        },
+        "bank_details": {
+          "account_holder_name": accHolderController.text,
+          "bank_name_branch": bankNameController.text,
+          "account_number": accNumberController.text,
+          "IFSC_code": ifscController.text,
+          "pan_card_number": panCardController.text,
+          "GSTIN": gstinController.text,
+          "upi_id": upiIdController.text,
+        },
+        "consent": {
+          "telemed_guidelines": telemedGuidelines,
+          "terms_condition": termsCondition,
+          "publications": publicationsController.text,
+          "linkedin_profile": linkedinController.text,
+          "consent_for_telconsult": consentTelconsult,
+          "ref_from_doc": refDocController.text,
+          "digital_signature": digitalSignatureController.text,
+          "prof_website": profWebsiteController.text,
+          "malpratice_insurance": malpracticeInsurance,
+          "awards_recog":
+              awardController.text.isNotEmpty ? [awardController.text] : [],
+        }
+      };
+      DialogHelper.showErroDialog(
+        description: "Submt Successfully",
+      );
+    }
   }
 
   signUp() {

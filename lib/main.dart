@@ -1,19 +1,19 @@
-
+import 'package:chatbot/mqtt.dart' show IoTDashboard;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'bindings.dart/init.dart';
+import 'example.dart';
 import 'service/shared_pref.dart';
 import 'theme/apptheme.dart';
 import 'utils/app_routes.dart';
 
-
 void main() async {
   //calling DependencyInjection init method
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await PreferenceUtils.init();
   requestPermission();
   runApp(const MyApp());
@@ -24,12 +24,12 @@ Future<void> requestPermission() async {
     final status = await Permission.microphone.request();
     final status2 = await Permission.camera.request();
   } else {
-  //   final permissionss = await window.navigator
-  //       .getUserMedia(
-  //         audio: true,
-  //       )
-  //       .then((value) => true);
-  //  print('permissionss $permissionss');
+    //   final permissionss = await window.navigator
+    //       .getUserMedia(
+    //         audio: true,
+    //       )
+    //       .then((value) => true);
+    //  print('permissionss $permissionss');
   }
 }
 
@@ -48,9 +48,9 @@ class MyApp extends StatelessWidget {
 
       themeMode: ThemeMode.light,
 
-       initialRoute: AppPages.INITIAL,
-     getPages: AppPages.routes,
- //   home: DoctorJoinScreen(),
+      //    initialRoute: AppPages.INITIAL,
+      //  getPages: AppPages.routes,
+      home: BluetoothJsonViewer(),
     );
   }
 }

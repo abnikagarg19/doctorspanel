@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../components/commons.dart';
 import '../service/shared_pref.dart';
+import '../view/components/side_menu.dart';
 import '../view/otp_forget.dart';
 
 class AuthController extends GetxController {
@@ -40,7 +41,7 @@ bool isRemember=false;var passwordLoginVisibility = false;
           PreferenceUtils.setString("id", data2["id"].toString());
           PreferenceUtils.setString("name", data2["name"].toString());
           PreferenceUtils.saveUserToken(data2["token"].toString());
-       //   Get.offAll(AiChatBot());
+         Get.to(SideMenu());
           break;
         case 404:
           var data2 = jsonDecode(value.body);

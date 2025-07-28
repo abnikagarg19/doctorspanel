@@ -18,9 +18,9 @@ abstract class Routes {
   static const LOGIN = _Paths.LOGIN;
   static const Task = _Paths.Task;
   static const journal = _Paths.journal;
-   static const onBoarding = _Paths.onBoarding;
-    static const promodoro = _Paths.promodoro;
-    static const videocall = _Paths.videocall;
+  static const onBoarding = _Paths.onBoarding;
+  static const promodoro = _Paths.promodoro;
+  static const videocall = _Paths.videocall;
 }
 
 abstract class _Paths {
@@ -31,9 +31,9 @@ abstract class _Paths {
   static const SIGNUP = '/sigup';
   static const Task = '/task';
   static const journal = '/journal';
-    static const promodoro = '/promodoro';
+  static const promodoro = '/promodoro';
   static const onBoarding = '/on_board';
-    static const videocall = '/videocall';
+  static const videocall = '/videocall';
 }
 
 class AppPages {
@@ -49,7 +49,6 @@ class AppPages {
           return const SplashScreen();
         },
         binding: InitBindings()),
-  
     GetPage(
         name: Routes.LOGIN,
         page: () {
@@ -60,9 +59,9 @@ class AppPages {
         name: _Paths.SIGNUP,
         page: () => SignUpPage(),
         binding: SignupBindings()),
-         GetPage(
-        name: _Paths.videocall,
-        page: () => DoctorJoinScreen(),
-       ),
+    GetPage(
+      name: _Paths.videocall,
+      page: () => DoctorJoinScreen(),
+    ),
   ];
 }

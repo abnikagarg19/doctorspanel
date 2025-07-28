@@ -3,9 +3,9 @@ class AppUrls {
   static const double APP_VERSION = 1.0;
   static const String BASE_URL =
       "http://13.233.39.246"; //;https://d32pj02ljl8jew.cloudfront.net";
-  static const String login = "/api/v1/user/login/";
-  static const String signUp = "/api/v1/user/create_user/";
-  static const String otpVerify = "/api/v1/user/otp_verify";
+  static const String login = "/api/v1/doctor/login";
+  static const String signUp = "/api/v1/doctor/create_health_practioner/";
+  static const String otpVerify = "/api/v1/doctor/otp_verify/";
   static const String forgetPassword = "/api/v1/auth/forget-password";
   static const String otpVerifyForgot = "/api/v1/auth/verify-otp";
   static const String changePassword = "/api/v1/auth/update-password";

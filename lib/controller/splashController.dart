@@ -14,9 +14,9 @@ class splashController extends GetxController {
     super.onReady();
     Timer(const Duration(seconds: 2), () {
       if (PreferenceUtils.isLoggedIn()) {
-        Get.offAllNamed(Routes.videocall);
+        Get.offAllNamed(Routes.LOGIN);
       } else {
-        Get.offAllNamed(Routes.videocall);
+        Get.offAllNamed(Routes.LOGIN);
       }
     });
     // }
