@@ -101,22 +101,34 @@ class _AiPageState extends State<AiPage> {
               height: 20,
             ),
             // Typing animation
-            AnimatedTextKit(
-              isRepeatingAnimation: false,
-              animatedTexts: [
-                TyperAnimatedText(
-                  "Take a gentle breath with me and notice how, in this moment, your body is already supporting you. You’ve faced these feelings before and made it through, let’s explore the strength you used then so we can call on it again now.",
-                  textAlign: TextAlign.center,
-                  textStyle: const TextStyle(
-                    color: Color.fromRGBO(75, 75, 75, 1),
-                    fontSize: 20,
-                    fontFamily: "SWItal",
-                  ),
-                  curve: Curves.linear,
-                  speed: const Duration(milliseconds: 62), // typing speed
-                ),
-              ],
-            ),
+           AnimatedTextKit(
+  isRepeatingAnimation: false,
+  animatedTexts: [
+    TyperAnimatedText(
+      "Take a gentle breath with me and notice how, in this moment, your body is already supporting you.",
+      textAlign: TextAlign.center,
+      textStyle: const TextStyle(
+        color: Color.fromRGBO(75, 75, 75, 1),
+        fontSize: 20,
+        fontFamily: "SWItal",
+      ),
+      curve: Curves.linear,
+      speed: const Duration(milliseconds: 58),
+    ),
+    TyperAnimatedText(
+      "You've faced these feelings before and made it through, let's explore the strength you used then so we can call on it again now.",
+      textAlign: TextAlign.center,
+      textStyle: const TextStyle(
+        color: Color.fromRGBO(75, 75, 75, 1),
+        fontSize: 20,
+        fontFamily: "SWItal",
+      ),
+      curve: Curves.linear,
+      speed: const Duration(milliseconds: 62),
+    ),
+  ],
+)
+
             // Text(
             //  "Take a gentle breath with me and notice how, in this moment, your body is already supporting you.",
             //   style: TextStyle(
