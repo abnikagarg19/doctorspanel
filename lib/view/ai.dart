@@ -13,7 +13,7 @@ class AiPage extends StatefulWidget {
 }
 
 class _AiPageState extends State<AiPage> {
-  var animationLink = 'assets/images/ai2.riv';
+  var animationLink = 'assets/images/boothai.riv';
   StateMachineController? stateMachineController;
   Artboard? artboard;
   SMIBool? isIdle;
@@ -92,13 +92,13 @@ class _AiPageState extends State<AiPage> {
                   _playMusic();
                 },
                 child: Container(
-                  height: 220,
-                  width: 220,
+                  height: 300,
+                  width: 300,
                   child: riv.Rive(fit: BoxFit.cover, artboard: artboard!),
                 ),
               ),
-            SizedBox(
-              height: 80,
+          SizedBox(
+              height: 20,
             ),
             // Typing animation
             AnimatedTextKit(
@@ -113,7 +113,7 @@ class _AiPageState extends State<AiPage> {
                     fontFamily: "SWItal",
                   ),
                   curve: Curves.linear,
-                  speed: const Duration(milliseconds: 65), // typing speed
+                  speed: const Duration(milliseconds: 62), // typing speed
                 ),
               ],
             ),
