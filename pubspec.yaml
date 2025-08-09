@@ -56,6 +56,8 @@ dependencies:
   flutter_blue_plus: ^1.35.5
   syncfusion_flutter_charts: ^30.1.38
   mqtt_client: ^10.10.0
+  audioplayers: ^6.5.0
+  just_audio: ^0.10.4
 
 
 dev_dependencies:
@@ -95,6 +97,7 @@ flutter:
      - assets/images/
      - assets/svg/
      - assets/aws_jul_25/
+     - assets/images/audio.wav
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -108,7 +111,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+    - family: SWItal
+      fonts:
+        - asset: assets/font/SWItal Regular.ttf
+          weight: 400
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

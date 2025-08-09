@@ -9,6 +9,8 @@ import 'example.dart';
 import 'service/shared_pref.dart';
 import 'theme/apptheme.dart';
 import 'utils/app_routes.dart';
+import 'view/ai.dart';
+import 'view/start_ai.dart';
 
 void main() async {
   //calling DependencyInjection init method
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
 
       //    initialRoute: AppPages.INITIAL,
       //  getPages: AppPages.routes,
-      home: BluetoothJsonViewer(),
+      home: AiStart(),
     );
   }
 }
