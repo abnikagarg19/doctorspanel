@@ -54,7 +54,7 @@ class _AiPageState extends State<AiPage> {
   }
 
   Future<void> _playMusic() async {
-     await _audioPlayer.setAsset("images/audio.wav" // your song in assets/audio
+     await _audioPlayer.setAudioSource(AudioSource.file("assets/images/audio.wav") // your song in assets/audio
         );
     await _audioPlayer.setVolume(0);
     Future.delayed(
