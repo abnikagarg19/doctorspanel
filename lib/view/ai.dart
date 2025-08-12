@@ -238,25 +238,25 @@ double frequency = 0.1; // How close waves are (higher = closer)
           SizedBox(
             height: 80,
           ),
-          // Center(
-          //   child: AnimatedScale(
-          //     scale: imageScale,
-          //     duration: const Duration(milliseconds: 800),
-          //     child: Image.asset(
-          //       "assets/images/aicon.png",
-          //       width: 200,
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(
-          //   height: 80,
-          // ),
           Center(
-            child: CustomPaint(
-            size: const Size(400, 200),
-            painter: WavePainter( _amplitude, _phase, frequency),
-                    ),
+            child: AnimatedScale(
+              scale: imageScale,
+              duration: const Duration(milliseconds: 800),
+              child: Image.asset(
+                "assets/images/aicon.png",
+                width: 200,
+              ),
+            ),
           ),
+          SizedBox(
+            height: 80,
+          ),
+          // Center(
+          //   child: CustomPaint(
+          //   size: const Size(400, 200),
+          //   painter: WavePainter( _amplitude, _phase, frequency),
+          //           ),
+          // ),
           SizedBox(
             height: 80,
           ),
