@@ -147,8 +147,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';import 'package:ffmpeg_kit_flutter_new/log.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 
 class AiPage extends StatefulWidget {
@@ -161,6 +162,10 @@ class _AudioVisualizerState extends State<AiPage>
   final player = AudioPlayer();
   final ffmpeg = FFmpegKit();
   double imageScale = 1.0;
+  double _amplitude = 0.0;  double _phase = 0.0; // for wave movement
+  Timer? waveTimer;
+
+double frequency = 0.1; // How close waves are (higher = closer)
   Timer? timer;
 
   @override
@@ -171,6 +176,26 @@ class _AudioVisualizerState extends State<AiPage>
 
   Future<void> playAndAnimate() async {
     // Load and play the audio
+    // FFmpeg command: decode audio to 16-bit PCM at 44100Hz mono
+      final audioPath =  "assets/images/audio.wav"; // <-- change this
+    final command =
+        "-i $audioPath -f s16le -ac 1 -ar 44100 pipe:1"; // sends PCM to stdout
+
+    FFmpegKit.executeAsync(command, (session) async {
+      final returnCode = await session.getReturnCode();
+      print("FFmpeg exited with code: $returnCode");
+    }, (log) {
+      print(log);
+    },);
+
+    // Simulate reading PCM chunks
+    waveTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      // This part should read PCM buffer and calculate amplitude
+      // For now, we simulate random amplitude
+      setState(() {
+        _amplitude = Random().nextDouble();
+      });
+    });
     await player.setAudioSource(AudioSource.file(
         "assets/assets/images/audio.wav")); // your song in assets/audio
     player.play();
@@ -178,10 +203,12 @@ class _AudioVisualizerState extends State<AiPage>
     // Run FFmpeg to read amplitude data in real time
     // This is a workaround because just_audio does not expose raw samples
     timer = Timer.periodic(const Duration(milliseconds: 100), (_) async {
-      double amplitude =
-          Random().nextDouble(); // Placeholder: use real FFT data here
+      _amplitude = Random().nextDouble(); // Placeholder: use real FFT data here
+
+     //  _amplitude = 0.5 + Random().nextDouble() * 0.5; // random height
+        _phase += 0.2; // move wave horizontally
       setState(() {
-        imageScale = 1.0 + amplitude * 0.5; // Expand/shrink
+        imageScale = 1.0 + _amplitude * 0.9; // Expand/shrink
       });
     });
 
@@ -211,15 +238,24 @@ class _AudioVisualizerState extends State<AiPage>
           SizedBox(
             height: 80,
           ),
+          // Center(
+          //   child: AnimatedScale(
+          //     scale: imageScale,
+          //     duration: const Duration(milliseconds: 800),
+          //     child: Image.asset(
+          //       "assets/images/aicon.png",
+          //       width: 200,
+          //     ),
+          //   ),
+          // ),
+          // SizedBox(
+          //   height: 80,
+          // ),
           Center(
-            child: AnimatedScale(
-              scale: imageScale,
-              duration: const Duration(milliseconds: 500),
-              child: Image.asset(
-                "assets/images/aicon.png",
-                width: 200,
-              ),
-            ),
+            child: CustomPaint(
+            size: const Size(400, 200),
+            painter: WavePainter( _amplitude, _phase, frequency),
+                    ),
           ),
           SizedBox(
             height: 80,
@@ -231,7 +267,7 @@ class _AudioVisualizerState extends State<AiPage>
               isRepeatingAnimation: false,
               animatedTexts: [
                 TyperAnimatedText(
-                  "Take a gentle breath with me and notice how, in this moment, your body is already supporting you.",
+                  "Take a gentle breath with me and notice how in this moment, your body is already supporting you.",
                   textAlign: TextAlign.center,
                   textStyle: const TextStyle(
                     color: Color.fromRGBO(75, 75, 75, 1),
@@ -259,4 +295,40 @@ class _AudioVisualizerState extends State<AiPage>
       ),
     );
   }
+}
+
+class WavePainter extends CustomPainter {
+  final double amplitude; // Current audio amplitude
+  final double frequency;
+  final double phase;
+
+  WavePainter(this.amplitude, this.frequency, this.phase);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blueAccent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    final path = Path();
+
+    // Increase height by multiplying amplitude
+    double heightMultiplier = 50.0; // <-- Adjust this for taller waves
+
+    for (double x = 0; x <= size.width; x++) {
+      double y = size.height / 2 +
+          sin((x * frequency) + phase) * amplitude * heightMultiplier;
+      if (x == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
