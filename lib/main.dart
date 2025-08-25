@@ -11,6 +11,7 @@ import 'theme/apptheme.dart';
 import 'utils/app_routes.dart';
 import 'view/ai.dart';
 import 'view/start_ai.dart';
+import 'view/websocket_page.dart';
 
 void main() async {
   //calling DependencyInjection init method
@@ -50,9 +51,9 @@ class MyApp extends StatelessWidget {
 
       themeMode: ThemeMode.light,
 
-      //    initialRoute: AppPages.INITIAL,
-      //  getPages: AppPages.routes,
-      home: AiStart(),
+         initialRoute: AppPages.INITIAL,
+       getPages: AppPages.routes,
+     // home: WebSocketPage(),
     );
   }
 }

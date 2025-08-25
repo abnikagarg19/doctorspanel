@@ -7,16 +7,16 @@ import 'package:get/get.dart';
 import '../view/home.dart';
 
 class splashController extends GetxController {
-  final image = "assets/images/logo.png";
+  final image =  "assets/images/aoenlyf.png";
 
   @override
   void onReady() {
     super.onReady();
     Timer(const Duration(seconds: 2), () {
       if (PreferenceUtils.isLoggedIn()) {
-        Get.offAllNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.videocall);
       } else {
-        Get.offAllNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.videocall);
       }
     });
     // }

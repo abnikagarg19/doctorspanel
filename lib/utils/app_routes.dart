@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../bindings.dart/signupBindings.dart';
 import '../view/signup.dart';
 import '../view/splash.dart';
+import '../view/websocket_page.dart';
 
 abstract class Routes {
   Routes._();
@@ -21,6 +22,7 @@ abstract class Routes {
   static const onBoarding = _Paths.onBoarding;
   static const promodoro = _Paths.promodoro;
   static const videocall = _Paths.videocall;
+  static const websocket = _Paths.websocket;
 }
 
 abstract class _Paths {
@@ -34,6 +36,7 @@ abstract class _Paths {
   static const promodoro = '/promodoro';
   static const onBoarding = '/on_board';
   static const videocall = '/videocall';
+  static const websocket = '/websocket';
 }
 
 class AppPages {
@@ -62,6 +65,10 @@ class AppPages {
     GetPage(
       name: _Paths.videocall,
       page: () => DoctorJoinScreen(),
+    ),
+    GetPage(
+      name: _Paths.websocket,
+      page: () => const WebSocketPage(),
     ),
   ];
 }

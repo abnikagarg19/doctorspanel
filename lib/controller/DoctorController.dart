@@ -19,18 +19,19 @@ class Doctorcontroller extends GetxController {
     super.dispose();
   }
 
-  List<DoctorModelMeeting> resposeList = [];
+  List appointmentList = [];
   bool isLoaded = false;
   void getMeeting() async {
-    resposeList.clear();
+    appointmentList.clear();
     HomeService().apiGetMeeting().then((value) {
       switch (value.statusCode) {
         case 200:
           isLoaded = true;
           final decodedData = jsonDecode(value.body);
-          if (decodedData["data"].isNotEmpty) {
-            resposeList.add(DoctorModelMeeting.fromJson(decodedData));
-          }
+          //if (decodedData["data"].isNotEmpty) {
+            print(decodedData);
+            appointmentList.add(decodedData);
+        //  }
 
           update();
           break;

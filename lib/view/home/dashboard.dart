@@ -87,6 +87,16 @@ class _DashboardState extends State<Dashboard> {
                   hintText: "Search here...",
                   color: const Color.fromARGB(255, 2, 20, 75)),
             ),
+            SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: () => Get.toNamed('/websocket'),
+              icon: Icon(Icons.wifi, color: Colors.white),
+              label: Text('WebSocket Test', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            ),
             SizedBox(
               width: 40,
             ),

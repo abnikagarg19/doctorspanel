@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart' as aa;
 import '../utils/app_urls.dart';
+import 'shared_pref.dart';
 
 class HomeService {
   final String noInternetMessage =
@@ -394,13 +395,13 @@ class HomeService {
 
   Future<Response> apiGetMeeting() async {
     var ur = Uri.parse(
-        AppUrls.BASE_URL + AppUrls.get_meeting + "?user_id=8&doctor_id=1");
+        "http://43.205.232.219:8000/api/v1/dashboard/get_all_meeting?date=2025-08-21");
+    var token = PreferenceUtils.getUserToken();
     try {
       final response = await http.get(ur, headers: {
         // "Access-Control-Allow-Origin": "*",
         'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4IiwiZXhwIjoxNzc0NDQ5NTQ5fQ.sWmgWS351Sj2eGwE8JtT5bRa2zLjKWpgSMMk_XG0qLg',
+        'Authorization': 'Bearer $token',
       });
       if (kDebugMode) {
         print(response.body);

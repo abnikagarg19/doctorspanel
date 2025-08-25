@@ -249,7 +249,7 @@ double frequency = 0.1; // How close waves are (higher = closer)
             ),
           ),
           SizedBox(
-            height: 80,
+            height: 20,
           ),
           // Center(
           //   child: CustomPaint(

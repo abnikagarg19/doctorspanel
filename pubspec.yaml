@@ -59,6 +59,8 @@ dependencies:
   audioplayers: ^6.5.0
   just_audio: ^0.10.4
   ffmpeg_kit_flutter_new: ^3.1.0
+  fl_chart: ^1.0.0
+  flutter_sound: ^9.28.0
 
 
 dev_dependencies:

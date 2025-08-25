@@ -2,7 +2,7 @@ class AppUrls {
   static const String APP_NAME = 'ChatBot';
   static const double APP_VERSION = 1.0;
   static const String BASE_URL =
-      "http://13.233.39.246"; //;https://d32pj02ljl8jew.cloudfront.net";
+      "http://43.205.232.219:8000"; //;https://d32pj02ljl8jew.cloudfront.net";
   static const String login = "/api/v1/doctor/login";
   static const String signUp = "/api/v1/doctor/create_health_practioner/";
   static const String otpVerify = "/api/v1/doctor/otp_verify/";
@@ -30,4 +30,9 @@ class AppUrls {
   static const String aaudioFile = "/api/v1/ai/voice_breathing/";
   static const String create_meeting = "/api/v1/meetings/create_user/";
   static const String get_meeting = "/api/v1/meetings/get_meeting_by_user/";
+  // Optional: Presigned AWS IoT WebSocket URL for Flutter web MQTT connections
+  // Leave empty to use default endpoint (will fail without SigV4)
+  static const String AWS_IOT_PRESIGNED_URL = '';
+  // MQTT client identifier to use for both IO and Web
+  static const String AWS_IOT_CLIENT_ID = 'flutter_client_web';
 }

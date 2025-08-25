@@ -150,21 +150,21 @@ class Login extends StatelessWidget {
                                   hintText: 'Enter your password',
                                   color: const Color(0xff585A60)),
 
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  InkWell(
-                                    onTap: () => Get.to(ForgetPassword()),
-                                    child: Text("Forgot Password?",
-                                        style: GoogleFonts.rubik(
-                                            color: AppTheme.hintTextColor,
-                                            fontSize:
-                                                Constant.verysmallbody(context),
-                                            fontWeight: FontWeight.w500,
-                                            height: 0)),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.end,
+                              //   children: [
+                              //     InkWell(
+                              //       onTap: () => Get.to(ForgetPassword()),
+                              //       child: Text("Forgot Password?",
+                              //           style: GoogleFonts.rubik(
+                              //               color: AppTheme.hintTextColor,
+                              //               fontSize:
+                              //                   Constant.verysmallbody(context),
+                              //               fontWeight: FontWeight.w500,
+                              //               height: 0)),
+                              //     ),
+                              //   ],
+                              // ),
                               // Row(
                               //   mainAxisAlignment: MainAxisAlignment.start,
                               //   children: [

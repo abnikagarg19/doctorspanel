@@ -1,12 +1,23 @@
+import 'dart:typed_data';
+
 import 'package:chatbot/utils/constant.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:videosdk/videosdk.dart';
-
+import 'dart:async';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'dart:convert';
+import 'dart:html' hide VoidCallback; // Only for Flutter Web
 import '../../../../videocall/participant.dart';
 import '../components/multiline_textbox.dart';
 import '../theme/apptheme.dart';
+import '../view/ecg_graph.dart';
+import 'dart:typed_data';
+import 'dart:typed_data';
+import 'dart:convert';
+import 'dart:html' as html;
 
 class MeetingScreen extends StatefulWidget {
   final String meetingId;
@@ -42,6 +53,178 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
     setMeetingEventListener();
 // _room.join();
+
+    _connectWebSocket(); //initAudioPlayer();
+  }
+
+  final FlutterSoundPlayer _player = FlutterSoundPlayer();
+  bool _isPlayerInited = false;
+  Future<void> initAudioPlayer() async {
+    await _player.openPlayer();
+    _isPlayerInited = true;
+    await _player.startPlayer(
+      fromDataBuffer: Uint8List(0), // start empty
+      codec: Codec.pcm16,
+      sampleRate: 16000,
+      numChannels: 1,
+    );
+  }
+
+  WebSocket? _socket;
+  final _messages = <String>[];
+  final _controller = TextEditingController();
+  late StreamSubscription _onMessageSub, _onOpenSub, _onCloseSub, _onErrorSub;
+
+  String _status = "Disconnected";
+
+  // Parsed sensor values
+  double? tempObj = 0;
+  int? bpm = 0;
+  int? spo2 = 0;
+  final List<int> _pcmChunks = [];
+  void _connectWebSocket() {
+    _socket = WebSocket("ws://127.0.0.1:8000/ws/iot");
+
+    _onOpenSub = _socket!.onOpen.listen((_) {
+      setState(() {
+        _status = "Connected ✅";
+      });
+    });
+
+    _onMessageSub = _socket!.onMessage.listen((event) {
+      final data = event.data;
+      if (data is String) {
+        try {
+          final jsonData = jsonDecode(data);
+          final topic = jsonData["topic"];
+          final payload = jsonData["payload"];
+
+          // Pick fields depending on topic
+          if (topic == "ecg_data/temperature") {
+            tempObj = payload["temp_obj_C"]?.toDouble();
+          } else if (topic == "ecg_data/SPO2") {
+            dynamic latest;
+
+            if (payload is List && payload.isNotEmpty) {
+              // take last element of array
+              latest = payload.last;
+            } else if (payload is Map) {
+              // single object
+              latest = payload;
+            }
+
+            if (latest != null) {
+              spo2 = latest["SpO2"]?.toInt();
+              bpm = latest["bpm"]?.toInt();
+            }
+          } else if (topic == "ecg_data/ecg") {
+            print("📈 ECG data: $payload");
+            onEcgMessage(payload);
+          } else if (topic == "ecg_data/stethoscope") {
+  try {
+    dynamic data = payload; // payload is already decoded
+
+    if (data is String) {
+      data = jsonDecode(data);
+    }
+
+    print("📩 ecg_data/stethoscope → $data");
+
+    if (data['audio_chunk'] != null) {
+      Uint8List bytes = base64Decode(data['audio_chunk']);
+      _pcmChunks.addAll(bytes);
+    }
+  } catch (e) {
+    print("❌ Error decoding audio: $e");
+  }
+}
+
+
+          setState(() {
+            print("📩 $topic → $payload");
+            _messages.add("📩 $topic → $payload");
+          });
+        } catch (e) {
+          setState(() {
+            _messages.add("⚠️ Invalid JSON: $data");
+          });
+        }
+      }
+    });
+
+    _onCloseSub = _socket!.onClose.listen((_) {
+      setState(() {
+        _status = "Disconnected ❌";
+      });
+    });
+
+    _onErrorSub = _socket!.onError.listen((_) {
+      setState(() {
+        _status = "Error ⚠️";
+      });
+    });
+  }
+
+  void _sendMessage() {
+    if (_socket != null && _socket!.readyState == WebSocket.OPEN) {
+      _socket!.send(_controller.text);
+      setState(() {
+        _messages.add("➡️ ${_controller.text}");
+      });
+      _controller.clear();
+    } else {
+      setState(() {
+        _messages.add("⚠️ Not connected");
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _onMessageSub.cancel();
+    _onOpenSub.cancel();
+    _onCloseSub.cancel();
+    _onErrorSub.cancel();
+    _socket?.close();
+    super.dispose();
+  }
+
+  List<FlSpot> ecgPoints = [];
+  double xValue = 0;
+
+  // Keep last N points (like 500)
+  final int maxSamples = 500;
+
+  void onEcgMessage(dynamic data) {
+    try {
+      if (data is Map<String, dynamic> && data.containsKey('batch')) {
+        // Batch of ECG values
+        for (var item in data['batch']) {
+          final double ecgValue = (item['ecg_value'] as num).toDouble();
+          final double ts = (item['timestamp'] as num).toDouble();
+
+          setState(() {
+            ecgPoints.add(FlSpot(ts, ecgValue));
+            if (ecgPoints.length > maxSamples) {
+              ecgPoints.removeAt(0);
+            }
+          });
+        }
+      } else if (data is Map<String, dynamic>) {
+        // Single ECG value
+        final double ecgValue = (data['ecg_value'] as num).toDouble();
+        final double ts = (data['timestamp'] as num).toDouble();
+
+        setState(() {
+          ecgPoints.add(FlSpot(ts, ecgValue));
+          if (ecgPoints.length > maxSamples) {
+            ecgPoints.removeAt(0);
+          }
+        });
+      }
+    } catch (e) {
+      print("❌ Error parsing ECG: $e");
+    }
   }
 
   void setMeetingEventListener() {
@@ -92,6 +275,54 @@ class _MeetingScreenState extends State<MeetingScreen> {
     "Lab Results",
     "Medications"
   ];
+  bool isPlaying = false;
+  AudioElement? _audioEl;
+  String? _wavUrl;
+
+  void prepareAudio() {
+      final wavBytes = pcmToWav(_pcmChunks);
+
+    final blob = html.Blob([wavBytes]);
+    _wavUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    _audioEl = html.AudioElement(_wavUrl!)
+      ..controls = false
+      ..autoplay = false;
+  }
+
+  Uint8List pcmToWav(List<int> pcmData,
+      {int sampleRate = 16000, int channels = 1}) {
+    int byteRate = sampleRate * channels * 2; // 16-bit PCM
+    int blockAlign = channels * 2;
+    int dataLength = pcmData.length;
+    int fileSize = 36 + dataLength;
+
+    final header = BytesBuilder();
+    header.add(ascii.encode('RIFF'));
+    header.add(_intToBytes(fileSize, 4));
+    header.add(ascii.encode('WAVE'));
+    header.add(ascii.encode('fmt '));
+    header.add(_intToBytes(16, 4)); // Subchunk1 size
+    header.add(_intToBytes(1, 2)); // PCM format
+    header.add(_intToBytes(channels, 2));
+    header.add(_intToBytes(sampleRate, 4));
+    header.add(_intToBytes(byteRate, 4));
+    header.add(_intToBytes(blockAlign, 2));
+    header.add(_intToBytes(16, 2)); // Bits per sample
+    header.add(ascii.encode('data'));
+    header.add(_intToBytes(dataLength, 4));
+
+    return Uint8List.fromList(header.toBytes() + pcmData);
+  }
+
+  List<int> _intToBytes(int value, int byteCount) {
+    final bytes = <int>[];
+    for (int i = 0; i < byteCount; i++) {
+      bytes.add((value >> (8 * i)) & 0xFF);
+    }
+    return bytes;
+  }
+
   int selectTabs = 0;
   @override
   Widget build(BuildContext context) {
@@ -238,7 +469,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                           SizedBox(
                                             height: 6,
                                           ),
-                                          Text("100",
+                                          Text("$tempObj",
                                               style: GoogleFonts.rubik(
                                                   color: Color.fromRGBO(
                                                       237, 70, 57, 1),
@@ -275,7 +506,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                           SizedBox(
                                             height: 6,
                                           ),
-                                          Text("76 BPM",
+                                          Text("$bpm BPM",
                                               style: GoogleFonts.rubik(
                                                   color: Color.fromRGBO(
                                                       54, 166, 29, 1),
@@ -312,7 +543,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                           SizedBox(
                                             height: 6,
                                           ),
-                                          Text("76 %",
+                                          Text("$spo2 %",
                                               style: GoogleFonts.rubik(
                                                   color: Color.fromRGBO(
                                                       54, 166, 29, 1),
@@ -339,27 +570,11 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Image.asset(
-                                            "assets/images/BP (1).png",
-                                          ),
-                                          SizedBox(
-                                            height: 6,
-                                          ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Text("120",
-                                                  style: GoogleFonts.rubik(
-                                                      color: Color.fromRGBO(
-                                                          54, 166, 29, 1),
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                              SizedBox(
-                                                width: 6,
-                                              ),
-                                              Text("SYS",
+                                              Text("Stethoscope",
                                                   style: GoogleFonts.rubik(
                                                       color:
                                                           AppTheme.blackColor,
@@ -375,80 +590,101 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Text("60",
-                                                  style: GoogleFonts.rubik(
-                                                      color: Color.fromRGBO(
-                                                          54, 166, 29, 1),
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                              SizedBox(
-                                                width: 6,
-                                              ),
-                                              Text("DIA",
-                                                  style: GoogleFonts.rubik(
-                                                      color:
-                                                          AppTheme.blackColor,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
+                                              ElevatedButton.icon(
+                                                onPressed: () {
+                                                  if (_audioEl == null) {
+                                                    prepareAudio();
+                                                  }
+                                                  if (!isPlaying) {
+                                                    _audioEl?.play();
+                                                  } else {
+                                                    _audioEl?.pause();
+                                                  }
+                                                  isPlaying = !isPlaying;setState(() {
+                                                    
+                                                  });
+                                                },
+                                                icon: Icon(isPlaying
+                                                    ? Icons.pause
+                                                    : Icons.play_arrow, size: 20,),
+                                                label: Text(isPlaying
+                                                    ? 'Stop'
+                                                    : 'Play'),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: isPlaying
+                                                      ? const Color.fromARGB(255, 255, 0, 55)
+                                                      : Colors.green,padding: EdgeInsets.symmetric(horizontal: 10),
+                                                  foregroundColor: Colors.white,
+                                                ),
+                                              )
                                             ],
                                           ),
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                    Container(
-                                      width: 100,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 10),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          color: Color.fromRGBO(
-                                              244, 244, 244, 0.7)),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text("Blood\nSugar",
-                                                  style: GoogleFonts.rubik(
-                                                      color:
-                                                          AppTheme.blackColor,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w400)),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 6,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text("140mg/dL",
-                                                  style: GoogleFonts.rubik(
-                                                      color: Color.fromRGBO(
-                                                          54, 166, 29, 1),
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w600)),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    )
+                                    // SizedBox(
+                                    //   height: 12,
+                                    // ),
+                                    // Container(
+                                    //   width: 100,
+                                    //   padding: EdgeInsets.symmetric(
+                                    //       horizontal: 10, vertical: 10),
+                                    //   decoration: BoxDecoration(
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(12),
+                                    //       color: Color.fromRGBO(
+                                    //           244, 244, 244, 0.7)),
+                                    //   child: Column(
+                                    //     crossAxisAlignment:
+                                    //         CrossAxisAlignment.center,
+                                    //     mainAxisAlignment:
+                                    //         MainAxisAlignment.center,
+                                    //     children: [
+                                    //       Row(
+                                    //         mainAxisAlignment:
+                                    //             MainAxisAlignment.center,
+                                    //         children: [
+                                    //           Text("Blood\nSugar",
+                                    //               style: GoogleFonts.rubik(
+                                    //                   color:
+                                    //                       AppTheme.blackColor,
+                                    //                   fontSize: 12,
+                                    //                   fontWeight:
+                                    //                       FontWeight.w400)),
+                                    //         ],
+                                    //       ),
+                                    //       SizedBox(
+                                    //         height: 6,
+                                    //       ),
+                                    //       Row(
+                                    //         mainAxisAlignment:
+                                    //             MainAxisAlignment.center,
+                                    //         children: [
+                                    //           Text("140mg/dL",
+                                    //               style: GoogleFonts.rubik(
+                                    //                   color: Color.fromRGBO(
+                                    //                       54, 166, 29, 1),
+                                    //                   fontSize: 12,
+                                    //                   fontWeight:
+                                    //                       FontWeight.w600)),
+                                    //         ],
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // )
                                   ],
                                 )),
+                            Positioned(
+                              bottom: 20,
+                              right: 20,
+                              child: Container(
+                                height: 120,
+                                width: 400,
+                                padding: EdgeInsets.all(10),
+                                child: EcgPlot(ecgData: ecgPoints),
+                              ),
+                            ),
+
                             // Meeting Controls
                             Positioned(
                               bottom: 20,
@@ -536,125 +772,132 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   ),
                 ),
 
-                if (constraints.maxHeight < constraints.maxWidth) const SizedBox(width: 20),
-                if (constraints.maxHeight < constraints.maxWidth) Expanded(
-                  flex: 5,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Patient Summary",
-                          style: GoogleFonts.rubik(
-                              color: Color.fromRGBO(54, 100, 188, 1),
-                              fontSize: Constant.subHeading(context),
-                              fontWeight: FontWeight.w700)),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: List.generate(
-                          tabsLIst.length,
-                          (index) {
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectTabs = index;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(vertical: 8),
-                                  decoration: BoxDecoration(
-                                      color: selectTabs == index
-                                          ? Color.fromRGBO(60, 150, 255, 1)
-                                          : AppTheme.whiteTextColor,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color.fromARGB(
-                                              132, 149, 147, 147),
-                                          spreadRadius: 1,
-                                          offset: const Offset(0, 6),
-                                          blurRadius: 10,
-                                        )
-                                      ],
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12),
-                                      )),
-                                  child: Center(
-                                    child: Text("${tabsLIst[index]}",
-                                        style: GoogleFonts.rubik(
-                                            color: selectTabs == index
-                                                ? Color.fromRGBO(
-                                                    255, 255, 255, 1)
-                                                : Color.fromRGBO(
-                                                    142, 142, 142, 1),
-                                            fontSize:
-                                                Constant.verysmallbody(context),
-                                            fontWeight: FontWeight.w500)),
+                if (constraints.maxHeight < constraints.maxWidth)
+                  const SizedBox(width: 20),
+                if (constraints.maxHeight < constraints.maxWidth)
+                  Expanded(
+                    flex: 5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Patient Summary",
+                            style: GoogleFonts.rubik(
+                                color: Color.fromRGBO(54, 100, 188, 1),
+                                fontSize: Constant.subHeading(context),
+                                fontWeight: FontWeight.w700)),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          children: List.generate(
+                            tabsLIst.length,
+                            (index) {
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectTabs = index;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    decoration: BoxDecoration(
+                                        color: selectTabs == index
+                                            ? Color.fromRGBO(60, 150, 255, 1)
+                                            : AppTheme.whiteTextColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color.fromARGB(
+                                                132, 149, 147, 147),
+                                            spreadRadius: 1,
+                                            offset: const Offset(0, 6),
+                                            blurRadius: 10,
+                                          )
+                                        ],
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          topRight: Radius.circular(12),
+                                        )),
+                                    child: Center(
+                                      child: Text("${tabsLIst[index]}",
+                                          style: GoogleFonts.rubik(
+                                              color: selectTabs == index
+                                                  ? Color.fromRGBO(
+                                                      255, 255, 255, 1)
+                                                  : Color.fromRGBO(
+                                                      142, 142, 142, 1),
+                                              fontSize: Constant.verysmallbody(
+                                                  context),
+                                              fontWeight: FontWeight.w500)),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: 1,
-                      ),
-                      Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 30),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(255, 255, 255, 1),
+                              );
+                            },
                           ),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text("Patient name: Raj Kumar",
-                                              style: GoogleFonts.rubik(
-                                                  color: AppTheme.blackColor,
-                                                  fontSize:
-                                                      Constant.twetysixtext(
-                                                          context),
-                                                  fontWeight: FontWeight.w700)),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Text(
-                                              "23y old male patient presents with a mild-grade febrile illness accompanied by a productive cough yielding white, odorless, non-blood-tinged sputum. Symptoms have been gradual in onset, with no associated chills, dyspnea, chest pain, or systemic complaints. There is no past medical history suggestive of diabetes, hypertension, thyroid dysfunction, or tuberculosis. Personal and lifestyle history are unremarkable.",
-                                              style: GoogleFonts.quicksand(
-                                                  color: AppTheme.blackColor,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500)),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Text("Symptoms:",
-                                              style: GoogleFonts.rubik(
-                                                  color: AppTheme.blackColor,
-                                                  fontSize: Constant.smallbody(
-                                                      context),
-                                                  fontWeight: FontWeight.w700)),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                              """Pain: A headache, back pain, stomachache.
+                        ),
+                        SizedBox(
+                          height: 1,
+                        ),
+                        Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 30),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(255, 255, 255, 1),
+                            ),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text("Patient name: Raj Kumar",
+                                                style: GoogleFonts.rubik(
+                                                    color: AppTheme.blackColor,
+                                                    fontSize:
+                                                        Constant.twetysixtext(
+                                                            context),
+                                                    fontWeight:
+                                                        FontWeight.w700)),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                                "23y old male patient presents with a mild-grade febrile illness accompanied by a productive cough yielding white, odorless, non-blood-tinged sputum. Symptoms have been gradual in onset, with no associated chills, dyspnea, chest pain, or systemic complaints. There is no past medical history suggestive of diabetes, hypertension, thyroid dysfunction, or tuberculosis. Personal and lifestyle history are unremarkable.",
+                                                style: GoogleFonts.quicksand(
+                                                    color: AppTheme.blackColor,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text("Symptoms:",
+                                                style: GoogleFonts.rubik(
+                                                    color: AppTheme.blackColor,
+                                                    fontSize:
+                                                        Constant.smallbody(
+                                                            context),
+                                                    fontWeight:
+                                                        FontWeight.w700)),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(
+                                                """Pain: A headache, back pain, stomachache.
               Fatigue: Feeling unusually tired or weak.
               Nausea: Feeling sick to your stomach, with an urge to vomit.
               Fever: An elevated body temperature.
@@ -662,42 +905,43 @@ class _MeetingScreenState extends State<MeetingScreen> {
               Coughing: A reflex action to clear the airways.
               Night sweats: Excessive sweating during sleep.
               """,
-                                              style: GoogleFonts.quicksand(
-                                                  color: AppTheme.blackColor,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500)),
-                                        ],
+                                                style: GoogleFonts.quicksand(
+                                                    color: AppTheme.blackColor,
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 80,
-                                    ),
-                                    Image.asset("assets/images/full_body.png")
-                                  ],
-                                ),
-                                // Row(
-                                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                //   children: [
-                                //     _infoButton(
-                                //         "Patient Vitals", selectedTab == "vitals", () {
-                                //       setState(() => selectedTab = "vitals");
-                                //     }),
-                                //     _infoButton(
-                                //         "Patient Summary", selectedTab == "summary",
-                                //         () {
-                                //       setState(() => selectedTab = "summary");
-                                //     }),
-                                //   ],
-                                // ),
-                                // const SizedBox(height: 20),
-                                // Expanded(
-                                //     child: selectedTab == "vitals"
-                                //         ? PatientVitalsWidget(height, width)
-                                //         : PatientSummaryWidget(height, width))
-                              ])),
-                    ],
+                                      SizedBox(
+                                        width: 80,
+                                      ),
+                                      Image.asset("assets/images/full_body.png")
+                                    ],
+                                  ),
+                                  // Row(
+                                  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  //   children: [
+                                  //     _infoButton(
+                                  //         "Patient Vitals", selectedTab == "vitals", () {
+                                  //       setState(() => selectedTab = "vitals");
+                                  //     }),
+                                  //     _infoButton(
+                                  //         "Patient Summary", selectedTab == "summary",
+                                  //         () {
+                                  //       setState(() => selectedTab = "summary");
+                                  //     }),
+                                  //   ],
+                                  // ),
+                                  // const SizedBox(height: 20),
+                                  // Expanded(
+                                  //     child: selectedTab == "vitals"
+                                  //         ? PatientVitalsWidget(height, width)
+                                  //         : PatientSummaryWidget(height, width))
+                                ])),
+                      ],
+                    ),
                   ),
-                ),
                 //  ],
               ]),
             );
@@ -796,7 +1040,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                 ),
                 vitalCard(
                   title: "Blood Pressure",
-                  value: "98",
+                  value: "$bpm",
                   status: "Critical",
                   bgColor: Colors.yellow.shade100,
                   width: width,
@@ -827,7 +1071,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
               children: [
                 vitalCard(
                   title: "Tempreture",
-                  value: "97",
+                  value: "$tempObj",
                   status: "Danger",
                   bgColor: Colors.red.shade100,
                   width: width,
@@ -850,7 +1094,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                 ),
                 vitalCard(
                   title: "Oxygen",
-                  value: "72",
+                  value: "$spo2",
                   status: "Normal",
                   bgColor: Colors.green.shade100,
                   width: width,
