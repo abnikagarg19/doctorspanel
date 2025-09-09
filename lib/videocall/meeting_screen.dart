@@ -83,7 +83,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int? spo2 = 0;
   final List<int> _pcmChunks = [];
   void _connectWebSocket() {
-    _socket = WebSocket("ws://127.0.0.1:8000/ws/iot");
+   // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot");http://43.205.135.0:8080
+   _socket = WebSocket("ws://43.205.135.0:8080/ws/iot");
 
     _onOpenSub = _socket!.onOpen.listen((_) {
       setState(() {
@@ -586,38 +587,53 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                           SizedBox(
                                             height: 6,
                                           ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ElevatedButton.icon(
-                                                onPressed: () {
-                                                  if (_audioEl == null) {
-                                                    prepareAudio();
-                                                  }
-                                                  if (!isPlaying) {
-                                                    _audioEl?.play();
-                                                  } else {
-                                                    _audioEl?.pause();
-                                                  }
-                                                  isPlaying = !isPlaying;setState(() {
-                                                    
-                                                  });
-                                                },
-                                                icon: Icon(isPlaying
-                                                    ? Icons.pause
-                                                    : Icons.play_arrow, size: 20,),
-                                                label: Text(isPlaying
-                                                    ? 'Stop'
-                                                    : 'Play'),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: isPlaying
-                                                      ? const Color.fromARGB(255, 255, 0, 55)
-                                                      : Colors.green,padding: EdgeInsets.symmetric(horizontal: 10),
-                                                  foregroundColor: Colors.white,
-                                                ),
-                                              )
-                                            ],
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              color: isPlaying
+                                                        ? const Color.fromARGB(255, 255, 0, 55)
+                                                        : Colors.green,
+                                            ),
+                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical:4),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(isPlaying
+                                                      ? Icons.pause
+                                                      : Icons.play_arrow, size: 16,), Text(isPlaying
+                                                      ? ' Stop'
+                                                      : ' Play', style: TextStyle(color: Colors.black, fontSize: 14),),
+                                                // ElevatedButton.icon(
+                                                //   onPressed: () {
+                                                //     if (_audioEl == null) {
+                                                //       prepareAudio();
+                                                //     }
+                                                //     if (!isPlaying) {
+                                                //       _audioEl?.play();
+                                                //     } else {
+                                                //       _audioEl?.pause();
+                                                //     }
+                                                //     isPlaying = !isPlaying;setState(() {
+                                                      
+                                                //     });
+                                                //   },
+                                                //   icon: Icon(isPlaying
+                                                //       ? Icons.pause
+                                                //       : Icons.play_arrow, size: 20,),
+                                                //   label: Text(isPlaying
+                                                //       ? 'Stop'
+                                                //       : 'Play'),
+                                                //   style: ElevatedButton.styleFrom(
+                                                //     backgroundColor: isPlaying
+                                                //         ? const Color.fromARGB(255, 255, 0, 55)
+                                                //         : Colors.green,padding: EdgeInsets.symmetric(horizontal: 10),
+                                                //     foregroundColor: Colors.white,
+                                                //   ),
+                                                // )
+                                              ],
+                                            ),
                                           ),
                                         ],
                                       ),
