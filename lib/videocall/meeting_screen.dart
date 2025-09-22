@@ -83,11 +83,12 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int? spo2 = 0;
   final List<int> _pcmChunks = [];
   void _connectWebSocket() {
-   // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot");http://43.205.135.0:8080
-   _socket = WebSocket("ws://43.205.135.0:8080/ws/iot");
+    // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot");http://43.205.135.0:8080
+    _socket = WebSocket("ws://43.205.135.0:8080/ws/iot");
 
     _onOpenSub = _socket!.onOpen.listen((_) {
       setState(() {
+        print("Connected ✅");
         _status = "Connected ✅";
       });
     });
@@ -122,24 +123,23 @@ class _MeetingScreenState extends State<MeetingScreen> {
             print("📈 ECG data: $payload");
             onEcgMessage(payload);
           } else if (topic == "ecg_data/stethoscope") {
-  try {
-    dynamic data = payload; // payload is already decoded
+            try {
+              dynamic data = payload; // payload is already decoded
 
-    if (data is String) {
-      data = jsonDecode(data);
-    }
+              if (data is String) {
+                data = jsonDecode(data);
+              }
 
-    print("📩 ecg_data/stethoscope → $data");
+              print("📩 ecg_data/stethoscope → $data");
 
-    if (data['audio_chunk'] != null) {
-      Uint8List bytes = base64Decode(data['audio_chunk']);
-      _pcmChunks.addAll(bytes);
-    }
-  } catch (e) {
-    print("❌ Error decoding audio: $e");
-  }
-}
-
+              if (data['audio_chunk'] != null) {
+                Uint8List bytes = base64Decode(data['audio_chunk']);
+                _pcmChunks.addAll(bytes);
+              }
+            } catch (e) {
+              print("❌ Error decoding audio: $e");
+            }
+          }
 
           setState(() {
             print("📩 $topic → $payload");
@@ -281,7 +281,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
   String? _wavUrl;
 
   void prepareAudio() {
-      final wavBytes = pcmToWav(_pcmChunks);
+    final wavBytes = pcmToWav(_pcmChunks);
 
     final blob = html.Blob([wavBytes]);
     _wavUrl = html.Url.createObjectUrlFromBlob(blob);
@@ -592,19 +592,28 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(50),
                                               color: isPlaying
-                                                        ? const Color.fromARGB(255, 255, 0, 55)
-                                                        : Colors.green,
+                                                  ? const Color.fromARGB(
+                                                      255, 255, 0, 55)
+                                                  : Colors.green,
                                             ),
-                                            padding: EdgeInsets.symmetric(horizontal: 10, vertical:4),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                Icon(isPlaying
+                                                Icon(
+                                                  isPlaying
                                                       ? Icons.pause
-                                                      : Icons.play_arrow, size: 16,), Text(isPlaying
-                                                      ? ' Stop'
-                                                      : ' Play', style: TextStyle(color: Colors.black, fontSize: 14),),
+                                                      : Icons.play_arrow,
+                                                  size: 16,
+                                                ),
+                                                Text(
+                                                  isPlaying ? ' Stop' : ' Play',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 14),
+                                                ),
                                                 // ElevatedButton.icon(
                                                 //   onPressed: () {
                                                 //     if (_audioEl == null) {
@@ -616,7 +625,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                                 //       _audioEl?.pause();
                                                 //     }
                                                 //     isPlaying = !isPlaying;setState(() {
-                                                      
+
                                                 //     });
                                                 //   },
                                                 //   icon: Icon(isPlaying
