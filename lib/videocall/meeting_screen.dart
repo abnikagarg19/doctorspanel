@@ -93,9 +93,9 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int? bpm = 0;
   int? spo2 = 0;
   final List<int> _pcmChunks = [];
-  void _connectWebSocket() {
+  void _connectWebSocket() {//http://52.66.212.189:8080/
     // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot");http://43.205.135.0:8080
-    _socket = WebSocket("ws://43.205.135.0:8080/ws/iot");
+    _socket = WebSocket("ws://52.66.212.189:8080/ws/iot");
 
     _onOpenSub = _socket!.onOpen.listen((_) {
       setState(() {
