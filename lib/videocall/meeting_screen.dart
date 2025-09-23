@@ -65,7 +65,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
     setMeetingEventListener();
 // _room.join();
 
-  //  _connectWebSocket(); //initAudioPlayer();
+    _connectWebSocket(); //initAudioPlayer();
   }
 
   final FlutterSoundPlayer _player = FlutterSoundPlayer();
@@ -95,7 +95,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
   final List<int> _pcmChunks = [];
   void _connectWebSocket() {//http://52.66.212.189:8080/khhhk
     // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot")
-    _socket = WebSocket("ws://52.66.212.189:8080/ws/iot");
+    _socket = WebSocket("wss://52.66.212.189:8080/ws/iot");
 
     _onOpenSub = _socket!.onOpen.listen((_) {
       setState(() {
@@ -602,61 +602,76 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                           SizedBox(
                                             height: 6,
                                           ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              color: isPlaying
-                                                  ? const Color.fromARGB(
-                                                      255, 255, 0, 55)
-                                                  : Colors.green,
-                                            ),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 4),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Icon(
-                                                  isPlaying
-                                                      ? Icons.pause
-                                                      : Icons.play_arrow,
-                                                  size: 16,
-                                                ),
-                                                Text(
-                                                  isPlaying ? ' Stop' : ' Play',
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 14),
-                                                ),
-                                                // ElevatedButton.icon(
-                                                //   onPressed: () {
-                                                //     if (_audioEl == null) {
-                                                //       prepareAudio();
-                                                //     }
-                                                //     if (!isPlaying) {
-                                                //       _audioEl?.play();
-                                                //     } else {
-                                                //       _audioEl?.pause();
-                                                //     }
-                                                //     isPlaying = !isPlaying;setState(() {
+                                          GestureDetector(
+                                            onTap: () {
+                                                    if (_audioEl == null) {
+                                                      prepareAudio();
+                                                    }
+                                                    if (!isPlaying) {
+                                                      _audioEl?.play();
+                                                    } else {
+                                                      _audioEl?.pause();
+                                                    }
+                                                    isPlaying = !isPlaying;setState(() {
 
-                                                //     });
-                                                //   },
-                                                //   icon: Icon(isPlaying
-                                                //       ? Icons.pause
-                                                //       : Icons.play_arrow, size: 20,),
-                                                //   label: Text(isPlaying
-                                                //       ? 'Stop'
-                                                //       : 'Play'),
-                                                //   style: ElevatedButton.styleFrom(
-                                                //     backgroundColor: isPlaying
-                                                //         ? const Color.fromARGB(255, 255, 0, 55)
-                                                //         : Colors.green,padding: EdgeInsets.symmetric(horizontal: 10),
-                                                //     foregroundColor: Colors.white,
-                                                //   ),
-                                                // )
-                                              ],
+                                                    });
+                                                  },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                color: isPlaying
+                                                    ? const Color.fromARGB(
+                                                        255, 255, 0, 55)
+                                                    : Colors.green,
+                                              ),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 4),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    isPlaying
+                                                        ? Icons.pause
+                                                        : Icons.play_arrow,
+                                                    size: 16,
+                                                  ),
+                                                  Text(
+                                                    isPlaying ? ' Stop' : ' Play',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 14),
+                                                  ),
+                                                  // ElevatedButton.icon(
+                                                  //   onPressed: () {
+                                                  //     if (_audioEl == null) {
+                                                  //       prepareAudio();
+                                                  //     }
+                                                  //     if (!isPlaying) {
+                                                  //       _audioEl?.play();
+                                                  //     } else {
+                                                  //       _audioEl?.pause();
+                                                  //     }
+                                                  //     isPlaying = !isPlaying;setState(() {
+                                            
+                                                  //     });
+                                                  //   },
+                                                  //   icon: Icon(isPlaying
+                                                  //       ? Icons.pause
+                                                  //       : Icons.play_arrow, size: 20,),
+                                                  //   label: Text(isPlaying
+                                                  //       ? 'Stop'
+                                                  //       : 'Play'),
+                                                  //   style: ElevatedButton.styleFrom(
+                                                  //     backgroundColor: isPlaying
+                                                  //         ? const Color.fromARGB(255, 255, 0, 55)
+                                                  //         : Colors.green,padding: EdgeInsets.symmetric(horizontal: 10),
+                                                  //     foregroundColor: Colors.white,
+                                                  //   ),
+                                                  // )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
