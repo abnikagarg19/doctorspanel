@@ -65,7 +65,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
     setMeetingEventListener();
 // _room.join();
 
-    _connectWebSocket(); //initAudioPlayer();
+  //  _connectWebSocket(); //initAudioPlayer();
   }
 
   final FlutterSoundPlayer _player = FlutterSoundPlayer();
