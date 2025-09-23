@@ -42,14 +42,24 @@ class _MeetingScreenState extends State<MeetingScreen> {
     super.initState();
 
     // Create and join room
-    _room = VideoSDK.createRoom(
-      roomId: widget.meetingId,
-      token: widget.token,
-      displayName: "Doctor",
-      micEnabled: micEnabled,
-      defaultCameraIndex: 0,
-      camEnabled: camEnabled,
-    );
+    // _room = VideoSDK.createRoom(
+    //   roomId: widget.meetingId,
+    //   token: widget.token,
+    //   displayName: "Doctor",
+    //   micEnabled: micEnabled,
+    //   defaultCameraIndex: 0,
+    //   camEnabled: camEnabled,
+    // );
+_room = VideoSDK.createRoom(
+  roomId: widget.meetingId ?? "",
+  token: widget.token ?? "",
+  displayName: "Doctor",
+  micEnabled: micEnabled,
+  defaultCameraIndex: 0,
+  camEnabled: camEnabled,
+);
+
+assert(widget.meetingId != null && widget.token != null, "MeetingId or Token is null");
 
     setMeetingEventListener();
 // _room.join();
@@ -244,7 +254,12 @@ class _MeetingScreenState extends State<MeetingScreen> {
       setState(() {
         participants[participant.id] = participant;
       });
-      print("Has Video: ${participant.enableCam()}");
+    participant.enableCam().then((value) {
+  print("Camera enabled");
+}).catchError((e) {
+  print("Error enabling camera: $e");
+});
+
 
       participant.on(Events.streamEnabled, (_) => setState(() {}));
       participant.on(Events.streamDisabled, (_) => setState(() {}));
