@@ -280,24 +280,62 @@ class _MeetingScreenState extends State<MeetingScreen> {
   AudioElement? _audioEl;
   String? _wavUrl;
 
-  void prepareAudio() {
-     if (_pcmChunks.isEmpty) {
-    print("⚠️ No audio data yet.");
-    return;
+  // void prepareAudio() {
+  //    if (_pcmChunks.isEmpty) {
+  //   print("⚠️ No audio data yet.");
+  //   return;
+  // }
+  //   final wavBytes = pcmToWav(_pcmChunks);
+
+  //   final blob = html.Blob([wavBytes]);
+  //   _wavUrl = html.Url.createObjectUrlFromBlob(blob);
+
+  //   _audioEl = html.AudioElement(_wavUrl!)
+  //     ..controls = false
+  //     ..autoplay = true;
+  //   _audioEl!.play().catchError((err) {
+  //     print("⚠️ Autoplay blocked: $err");
+  //   });
+  // }
+    /// Optional: amplify PCM16 audio
+  Uint8List amplifyPCM16(Uint8List pcm, {double gain = 2.0}) {
+    final int16 = pcm.buffer.asInt16List();
+    final out = Int16List(int16.length);
+
+    for (int i = 0; i < int16.length; i++) {
+      int amplified = (int16[i] * gain).toInt();
+      if (amplified > 32767) amplified = 32767;
+      if (amplified < -32768) amplified = -32768;
+      out[i] = amplified;
+    }
+
+    return out.buffer.asUint8List();
   }
-    final wavBytes = pcmToWav(_pcmChunks);
+ void prepareAudio({int sampleRate = 16000, int channels = 1, double gain = 2.0}) {
+    if (_pcmChunks.isEmpty) {
+      print("⚠️ No audio data yet.");
+      return;
+    }
+
+    // Apply gain
+    Uint8List boosted = amplifyPCM16(Uint8List.fromList(_pcmChunks), gain: gain);
+
+    // Wrap in WAV
+    final wavBytes = pcmToWav(boosted, sampleRate: sampleRate, channels: channels);
 
     final blob = html.Blob([wavBytes]);
     _wavUrl = html.Url.createObjectUrlFromBlob(blob);
 
     _audioEl = html.AudioElement(_wavUrl!)
-      ..controls = false
+      ..controls = true
       ..autoplay = true;
+
     _audioEl!.play().catchError((err) {
       print("⚠️ Autoplay blocked: $err");
     });
-  }
 
+    print("▶️ Audio prepared and playing");
+  }
   Uint8List pcmToWav(List<int> pcmData,
       {int sampleRate = 16000, int channels = 1}) {
     int byteRate = sampleRate * channels * 2; // 16-bit PCM
