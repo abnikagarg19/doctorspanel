@@ -95,13 +95,10 @@ class _MeetingScreenState extends State<MeetingScreen> {
   final List<int> _pcmChunks = [];
   void _connectWebSocket() {//ws://52.66.212.189:8080/ws/iot
     // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot")
-    _socket = WebSocket("wss://aeonlyf.com/ws/iot");
+    _socket = html.WebSocket("wss://aeonlyf.com/ws/iot");
 
     _onOpenSub = _socket!.onOpen.listen((_) {
-      setState(() {
-        print("Connected ✅");
-        _status = "Connected ✅";
-      });
+       print("✅ WebSocket connected (Web)");
     });
 
     _onMessageSub = _socket!.onMessage.listen((event) {
@@ -175,20 +172,6 @@ class _MeetingScreenState extends State<MeetingScreen> {
         _status = "Error ⚠️";
       });
     });
-  }
-
-  void _sendMessage() {
-    if (_socket != null && _socket!.readyState == WebSocket.OPEN) {
-      _socket!.send(_controller.text);
-      setState(() {
-        _messages.add("➡️ ${_controller.text}");
-      });
-      _controller.clear();
-    } else {
-      setState(() {
-        _messages.add("⚠️ Not connected");
-      });
-    }
   }
 
   @override
