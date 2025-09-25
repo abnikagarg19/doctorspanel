@@ -62,7 +62,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
     // assert(widget.meetingId != null && widget.token != null,
     //     "MeetingId or Token is null");
 
-    setMeetingEventListener();
+    //setMeetingEventListener();
  _room.join();
 
     _connectWebSocket(); //initAudioPlayer();
