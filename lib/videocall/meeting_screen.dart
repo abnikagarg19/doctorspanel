@@ -8,7 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:videosdk/videosdk.dart';
 import 'dart:async';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'dart:convert';import 'dart:html';
+import 'dart:convert';
+import 'dart:html';
 import 'dart:html' hide VoidCallback; // Only for Flutter Web
 import '../../../../videocall/participant.dart';
 import '../components/multiline_textbox.dart';
@@ -50,7 +51,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
     //   defaultCameraIndex: 0,
     //   camEnabled: camEnabled,
     // );
-   _room = VideoSDK.createRoom(
+    _room = VideoSDK.createRoom(
       roomId: widget.meetingId ?? "",
       token: widget.token ?? "",
       displayName: "Doctor",
@@ -63,7 +64,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
     //     "MeetingId or Token is null");
 
     setMeetingEventListener();
- //_room.join();
+    //_room.join();
 
     _connectWebSocket(); //initAudioPlayer();
   }
@@ -93,12 +94,13 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int? bpm = 0;
   int? spo2 = 0;
   final List<int> _pcmChunks = [];
-  void _connectWebSocket() {//ws://52.66.212.189:8080/ws/iot
+  void _connectWebSocket() {
+    //ws://52.66.212.189:8080/ws/iot
     // _socket = WebSocket("ws://127.0.0.1:8000/ws/iot")
     _socket = html.WebSocket("wss://aeonlyf.com/ws/iot");
 
     _onOpenSub = _socket!.onOpen.listen((_) {
-       print("✅ WebSocket connected (Web)");
+      print("✅ WebSocket connected (Web)");
     });
 
     _onMessageSub = _socket!.onMessage.listen((event) {
@@ -279,6 +281,10 @@ class _MeetingScreenState extends State<MeetingScreen> {
   String? _wavUrl;
 
   void prepareAudio() {
+     if (_pcmChunks.isEmpty) {
+    print("⚠️ No audio data yet.");
+    return;
+  }
     final wavBytes = pcmToWav(_pcmChunks);
 
     final blob = html.Blob([wavBytes]);
@@ -286,7 +292,10 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
     _audioEl = html.AudioElement(_wavUrl!)
       ..controls = false
-      ..autoplay = false;
+      ..autoplay = true;
+    _audioEl!.play().catchError((err) {
+      print("⚠️ Autoplay blocked: $err");
+    });
   }
 
   Uint8List pcmToWav(List<int> pcmData,
@@ -365,7 +374,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                             Positioned.fill(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                               // child: Container(),
+                                // child: Container(),
                                 child: // participants.length > 1
                                     // ? Positioned.fill(
                                     //     child: ParticipantTile(
@@ -588,18 +597,17 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                                    if (_audioEl == null) {
-                                                      prepareAudio();
-                                                    }
-                                                    if (!isPlaying) {
-                                                      _audioEl?.play();
-                                                    } else {
-                                                      _audioEl?.pause();
-                                                    }
-                                                    isPlaying = !isPlaying;setState(() {
-
-                                                    });
-                                                  },
+                                              if (_audioEl == null) {
+                                                prepareAudio();
+                                              }
+                                              if (!isPlaying) {
+                                                _audioEl?.play();
+                                              } else {
+                                                _audioEl?.pause();
+                                              }
+                                              isPlaying = !isPlaying;
+                                              setState(() {});
+                                            },
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 borderRadius:
@@ -622,7 +630,9 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                                     size: 16,
                                                   ),
                                                   Text(
-                                                    isPlaying ? ' Stop' : ' Play',
+                                                    isPlaying
+                                                        ? ' Stop'
+                                                        : ' Play',
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 14),
@@ -638,7 +648,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                                   //       _audioEl?.pause();
                                                   //     }
                                                   //     isPlaying = !isPlaying;setState(() {
-                                            
+
                                                   //     });
                                                   //   },
                                                   //   icon: Icon(isPlaying
