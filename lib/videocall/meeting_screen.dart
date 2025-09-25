@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:chatbot/utils/constant.dart';
+import 'package:chatbot/videocall/audio_class.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide VoidCallback;
 import 'package:get/get.dart';
@@ -93,6 +94,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
   double? tempObj = 0;
   int? bpm = 0;
   int? spo2 = 0;
+  final wavPlayer = WavAudioPlayer();
+
   final List<int> _pcmChunks = [];
   void _connectWebSocket() {
     //ws://52.66.212.189:8080/ws/iot
@@ -143,8 +146,10 @@ class _MeetingScreenState extends State<MeetingScreen> {
               print("📩 ecg_data/stethoscope → $data");
 
               if (data['audio_chunk'] != null) {
-                Uint8List bytes = base64Decode(data['audio_chunk']);
-                _pcmChunks.addAll(bytes);
+                // Uint8List bytes = base64Decode(data['audio_chunk']);
+                // _pcmChunks.addAll(bytes);
+                Uint8List bytes = base64Decode(payload['audio_chunk']);
+                wavPlayer.play(bytes, sampleRate: 16000, gain: 2.0);
               }
             } catch (e) {
               print("❌ Error decoding audio: $e");
@@ -297,7 +302,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
   //     print("⚠️ Autoplay blocked: $err");
   //   });
   // }
-    /// Optional: amplify PCM16 audio
+  /// Optional: amplify PCM16 audio
   Uint8List amplifyPCM16(Uint8List pcm, {double gain = 2.0}) {
     final int16 = pcm.buffer.asInt16List();
     final out = Int16List(int16.length);
@@ -311,17 +316,21 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
     return out.buffer.asUint8List();
   }
- void prepareAudio({int sampleRate = 16000, int channels = 1, double gain = 2.0}) {
+
+  void prepareAudio(
+      {int sampleRate = 16000, int channels = 1, double gain = 2.0}) {
     if (_pcmChunks.isEmpty) {
       print("⚠️ No audio data yet.");
       return;
     }
 
     // Apply gain
-    Uint8List boosted = amplifyPCM16(Uint8List.fromList(_pcmChunks), gain: gain);
+    Uint8List boosted =
+        amplifyPCM16(Uint8List.fromList(_pcmChunks), gain: gain);
 
     // Wrap in WAV
-    final wavBytes = pcmToWav(boosted, sampleRate: sampleRate, channels: channels);
+    final wavBytes =
+        pcmToWav(boosted, sampleRate: sampleRate, channels: channels);
 
     final blob = html.Blob([wavBytes]);
     _wavUrl = html.Url.createObjectUrlFromBlob(blob);
@@ -336,6 +345,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
     print("▶️ Audio prepared and playing");
   }
+
   Uint8List pcmToWav(List<int> pcmData,
       {int sampleRate = 16000, int channels = 1}) {
     int byteRate = sampleRate * channels * 2; // 16-bit PCM
