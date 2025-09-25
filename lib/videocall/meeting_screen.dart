@@ -365,7 +365,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
                             Positioned.fill(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: // participants.length > 1
+                                child: Container(),
+                             //   child: // participants.length > 1
                                     // ? Positioned.fill(
                                     //     child: ParticipantTile(
                                     //       key: Key(_room.localParticipant.id),
@@ -386,58 +387,58 @@ class _MeetingScreenState extends State<MeetingScreen> {
                                     //                     FontWeight.w500))),
                                     //   ),
 
-                                    ParticipantTile(
-                                  key: Key(_room.localParticipant.id),
-                                  participant: local,
-                                ),
+                                //     ParticipantTile(
+                                //   key: Key(_room.localParticipant.id),
+                                //   participant: local,
+                                // ),
                               ),
                             ),
 
-                            if (remoteParticipants.isNotEmpty)
-                              Positioned(
-                                top: 16,
-                                left: 16,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    width: 150,
-                                    height: 180,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: ParticipantTile(
-                                      participant: remoteParticipants.first,
-                                      smallView: true,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            else
-                              Positioned(
-                                top: 16,
-                                left: 16,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                      width: 150,
-                                      height: 180,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        border: Border.all(
-                                            color: AppTheme.backGround),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Center(
-                                          child: Text("No Video",
-                                              style: GoogleFonts.rubik(
-                                                  color: AppTheme
-                                                      .whiteBackgroundColor,
-                                                  fontSize: 12,
-                                                  fontWeight:
-                                                      FontWeight.w500)))),
-                                ),
-                              ),
+                            // if (remoteParticipants.isNotEmpty)
+                            //   Positioned(
+                            //     top: 16,
+                            //     left: 16,
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       child: Container(
+                            //         width: 150,
+                            //         height: 180,
+                            //         decoration: BoxDecoration(
+                            //           color: Colors.black,
+                            //           borderRadius: BorderRadius.circular(12),
+                            //         ),
+                            //         child: ParticipantTile(
+                            //           participant: remoteParticipants.first,
+                            //           smallView: true,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   )
+                            // else
+                            //   Positioned(
+                            //     top: 16,
+                            //     left: 16,
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       child: Container(
+                            //           width: 150,
+                            //           height: 180,
+                            //           decoration: BoxDecoration(
+                            //             color: Colors.black,
+                            //             border: Border.all(
+                            //                 color: AppTheme.backGround),
+                            //             borderRadius: BorderRadius.circular(12),
+                            //           ),
+                            //           child: Center(
+                            //               child: Text("No Video",
+                            //                   style: GoogleFonts.rubik(
+                            //                       color: AppTheme
+                            //                           .whiteBackgroundColor,
+                            //                       fontSize: 12,
+                            //                       fontWeight:
+                            //                           FontWeight.w500)))),
+                            //     ),
+                            //   ),
                             Positioned(
                                 top: 16,
                                 right: 16,
