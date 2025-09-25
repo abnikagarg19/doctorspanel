@@ -2,13 +2,13 @@ import 'dart:typed_data';
 
 import 'package:chatbot/utils/constant.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide VoidCallback;
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:videosdk/videosdk.dart';
 import 'dart:async';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'dart:convert';
+import 'dart:convert';import 'dart:html';
 import 'dart:html' hide VoidCallback; // Only for Flutter Web
 import '../../../../videocall/participant.dart';
 import '../components/multiline_textbox.dart';
@@ -50,19 +50,19 @@ class _MeetingScreenState extends State<MeetingScreen> {
     //   defaultCameraIndex: 0,
     //   camEnabled: camEnabled,
     // );
-    _room = VideoSDK.createRoom(
-      roomId: widget.meetingId ?? "",
-      token: widget.token ?? "",
-      displayName: "Doctor",
-      micEnabled: micEnabled,
-      defaultCameraIndex: 0,
-      camEnabled: camEnabled,
-    );
+   // _room = VideoSDK.createRoom(
+    //   roomId: widget.meetingId ?? "",
+    //   token: widget.token ?? "",
+    //   displayName: "Doctor",
+    //   micEnabled: micEnabled,
+    //   defaultCameraIndex: 0,
+    //   camEnabled: camEnabled,
+    // );
 
-    assert(widget.meetingId != null && widget.token != null,
-        "MeetingId or Token is null");
+    // assert(widget.meetingId != null && widget.token != null,
+    //     "MeetingId or Token is null");
 
-    setMeetingEventListener();
+    // setMeetingEventListener();
 // _room.join();
 
     _connectWebSocket(); //initAudioPlayer();
