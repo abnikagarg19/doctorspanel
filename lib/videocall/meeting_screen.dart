@@ -325,12 +325,12 @@ class _MeetingScreenState extends State<MeetingScreen> {
   int selectTabs = 0;
   @override
   Widget build(BuildContext context) {
-    final local = _room.localParticipant;
-    final remoteParticipants =
-        participants.values.where((p) => p.id != local.id).toList();
+    // final local = _room.localParticipant;
+    // final remoteParticipants =
+    //     participants.values.where((p) => p.id != local.id).toList();
 
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    // double width = MediaQuery.of(context).size.width;
+    // double height = MediaQuery.of(context).size.height;
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
