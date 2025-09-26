@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:chatbot/utils/constant.dart';
+import 'package:chatbot/videocall/api.dart';
 import 'package:chatbot/videocall/audio_class.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart' hide VoidCallback;
@@ -42,7 +43,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
   @override
   void initState() {
     super.initState();
-
+createMeeting();
     // Create and join room
     // _room = VideoSDK.createRoom(
     //   roomId: widget.meetingId,
@@ -60,6 +61,9 @@ class _MeetingScreenState extends State<MeetingScreen> {
       defaultCameraIndex: 0,
       camEnabled: camEnabled,
     );
+//create the transcription config
+
+// start realtime transcription
 
     // assert(widget.meetingId != null && widget.token != null,
     //     "MeetingId or Token is null");
@@ -245,11 +249,11 @@ class _MeetingScreenState extends State<MeetingScreen> {
       setState(() {
         participants[participant.id] = participant;
       });
-      participant.enableCam().then((value) {
-        print("Camera enabled");
-      }).catchError((e) {
-        print("Error enabling camera: $e");
-      });
+      // participant.enableCam().then((value) {
+      //   print("Camera enabled");
+      // }).catchError((e) {
+      //   print("Error enabling camera: $e");
+      // });
 
       participant.on(Events.streamEnabled, (_) => setState(() {}));
       participant.on(Events.streamDisabled, (_) => setState(() {}));
@@ -265,8 +269,30 @@ class _MeetingScreenState extends State<MeetingScreen> {
       participants.clear();
       Navigator.pop(context);
     });
-
+    // _room.on(Events.transcriptionText, (data) {
+    //   data.toJson().forEach(
+    //       (key, value) => print('$key: $value')); // if SDK supports toJson()
+    // });
     _room.join();
+    // TranscriptionConfig transcriptionConfig = TranscriptionConfig(
+    //   webhookUrl:
+    //       "https://recurrently-congruent-millard.ngrok-free.dev/webhook",
+    //   summaryConfig: SummaryConfig(
+    //     enabled: false,
+    //     prompt:
+    //         "Write summary in sections like Title, Agenda, Speakers, Action Items, Outlines, Notes and Summary",
+    //   ),
+    // );
+    // _room.join().then((_) {
+    //   print("Room joined successfully");
+
+    //   // Now start transcription
+    //   try {
+    //     _room.startTranscription(transcriptionConfig: transcriptionConfig);
+    //   } catch (e, s) {
+    //     print("Error starting transcription: $e\n$s");
+    //   }
+    // });
   }
 
   Future<bool> _onWillPop() async {

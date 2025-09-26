@@ -318,7 +318,7 @@ class DoctorJoinScreen extends StatelessWidget {
                                             //meeting_id_front
                                             Get.to(
                                               MeetingScreen(
-                                                meetingId: "19vt-rlcw-fdf3",
+                                                meetingId: "kv3f-g63t-55fx",
                                                 token: token,
                                               ),
                                             );
