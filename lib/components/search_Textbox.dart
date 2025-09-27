@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 
 import '../theme/apptheme.dart';
+import '../utils/constant.dart';
 
 class search_textbox extends StatelessWidget {
   final String hintText;
@@ -36,7 +38,7 @@ class search_textbox extends StatelessWidget {
       controller: textEditingController,
       onTap: onTapText, focusNode: focus,
       textInputAction: TextInputAction.search,
-      readOnly: readOnly,
+      //readOnly: readOnly,
       //   if (_serach.text != "") {
       //     Get.to(
       //       SearchDetail(
@@ -52,16 +54,16 @@ class search_textbox extends StatelessWidget {
       // },
 
       autofocus: autofocus,
-      cursorColor: AppTheme.lightPrimaryColor,
+      cursorColor: AppTheme.blackColor,
       textAlignVertical: TextAlignVertical.center,
       style: TextStyle(
-        fontSize: 14,
+        fontSize: 14,color: Colors.black
       ),
       onSubmitted: onsubmit,
       onChanged: onChanged,
       decoration: InputDecoration(
         prefixIcon: iconPref,
-        contentPadding: EdgeInsets.all(8),
+        contentPadding: EdgeInsets.all(16),
         isDense: true,
         border: OutlineInputBorder(
           borderSide: BorderSide(
@@ -84,11 +86,13 @@ class search_textbox extends StatelessWidget {
             width: 0,
           ),
         ),
-        hintStyle:
-            Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
+        hintStyle: GoogleFonts.rubik(
+                  fontSize: Constant.smallbody(context),
+                  color: AppTheme.lightHintTextColor,
+                  fontWeight: FontWeight.w400),
         suffixIcon: InkWell(
           onTap: onTap,
-          child: iconSuf,
+          child: Icon(Icons.search),
         ),
         prefixIconColor: Theme.of(context).textTheme.displaySmall!.color,
         suffixIconColor: Theme.of(context).textTheme.displaySmall!.color,

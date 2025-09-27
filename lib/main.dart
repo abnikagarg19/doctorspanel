@@ -10,6 +10,8 @@ import 'service/shared_pref.dart';
 import 'theme/apptheme.dart';
 import 'utils/app_routes.dart';
 import 'view/ai.dart';
+import 'view/chat/chat.dart';
+import 'view/chat/doctor_page.dart';
 import 'view/start_ai.dart';
 import 'view/websocket_page.dart';
 
@@ -23,17 +25,17 @@ void main() async {
 }
 
 Future<void> requestPermission() async {
-  if (GetPlatform.isAndroid) {
+  //if (GetPlatform.isAndroid) {
     final status = await Permission.microphone.request();
     final status2 = await Permission.camera.request();
-  } else {
+ // } else {
     //   final permissionss = await window.navigator
     //       .getUserMedia(
     //         audio: true,
     //       )
     //       .then((value) => true);
     //  print('permissionss $permissionss');
-  }
+ // }
 }
 
 class MyApp extends StatelessWidget {
@@ -51,9 +53,9 @@ class MyApp extends StatelessWidget {
 
       themeMode: ThemeMode.light,
 
-         initialRoute: AppPages.INITIAL,
-       getPages: AppPages.routes,
-     // home: WebSocketPage(),
+      //    initialRoute: AppPages.INITIAL,
+      //  getPages: AppPages.routes,
+      home: VoiceChat(),
     );
   }
 }

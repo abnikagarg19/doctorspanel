@@ -61,6 +61,7 @@ dependencies:
   fl_chart: ^1.0.0
   flutter_sound: ^9.28.0
   videosdk: ^3.0.0
+  vad: ^0.0.6
 
 
 dev_dependencies:

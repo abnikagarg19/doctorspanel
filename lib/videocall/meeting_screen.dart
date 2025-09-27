@@ -43,7 +43,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
   @override
   void initState() {
     super.initState();
-createMeeting();
+    createMeeting();
     // Create and join room
     // _room = VideoSDK.createRoom(
     //   roomId: widget.meetingId,
@@ -445,39 +445,82 @@ createMeeting();
                       Expanded(
                         child: Stack(
                           children: [
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                // child: Container(),
-                                child: // participants.length > 1
-                                    // ? Positioned.fill(
-                                    //     child: ParticipantTile(
-                                    //       key: Key(_room.localParticipant.id),
-                                    //       participant: _room.localParticipant,
-                                    //     ),
-                                    //   )
-                                    // :
-                                    // Container(
-                                    //     decoration: BoxDecoration(
-                                    //         color: AppTheme.blackColor),
-                                    //     child: Center(
-                                    //         child: Text("Waiting for join...",
-                                    //             style: GoogleFonts.rubik(
-                                    //                 color: AppTheme
-                                    //                     .whiteBackgroundColor,
-                                    //                 fontSize: 12,
-                                    //                 fontWeight:
-                                    //                     FontWeight.w500))),
-                                    //   ),
+                            // Positioned.fill(
+                            //   child: ClipRRect(
+                            //     borderRadius: BorderRadius.circular(12),
+                            //     child: ParticipantTile(
+                            //       key: Key(_room.localParticipant.id),
+                            //       participant: local,
+                            //     ),
+                            //   ),
+                            // ),
 
-                                    ParticipantTile(
-                                  key: Key(_room.localParticipant.id),
-                                  participant: local,
-                                ),
-                              ),
+                            // if (remoteParticipants.isNotEmpty)
+                            //   Positioned(
+                            //     top: 16,
+                            //     left: 16,
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       child: Container(
+                            //         width: 150,
+                            //         height: 180,
+                            //         decoration: BoxDecoration(
+                            //           color: Colors.black,
+                            //           borderRadius: BorderRadius.circular(12),
+                            //         ),
+                            //         child: ParticipantTile(
+                            //           participant: remoteParticipants.first,
+                            //           smallView: true,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   )
+                            // else
+                            //   Positioned(
+                            //     top: 16,
+                            //     left: 16,
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       child: Container(
+                            //           width: 150,
+                            //           height: 180,
+                            //           decoration: BoxDecoration(
+                            //             color: Colors.black,
+                            //             border: Border.all(
+                            //                 color: AppTheme.backGround),
+                            //             borderRadius: BorderRadius.circular(12),
+                            //           ),
+                            //           child: Center(
+                            //               child: Text("No Video",
+                            //                   style: GoogleFonts.rubik(
+                            //                       color: AppTheme
+                            //                           .whiteBackgroundColor,
+                            //                       fontSize: 12,
+                            //                       fontWeight:
+                            //                           FontWeight.w500)))),
+                            //     ),
+                            //   ),
+                            Positioned.fill(
+                              child: remoteParticipants.isNotEmpty
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: ParticipantTile(
+                                        participant: remoteParticipants.first,
+                                      ),
+                                    )
+                                  : Container(
+                                    color: Colors.black,
+                                    child: Center(
+                                        child: Text("Waiting for doctor...",
+                                            style: GoogleFonts.rubik(
+                                                color:
+                                                    AppTheme.whiteBackgroundColor,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500))),
+                                  ),
                             ),
 
-                            if (remoteParticipants.isNotEmpty)
+                           // if (remoteParticipants.isNotEmpty)
                               Positioned(
                                 top: 16,
                                 left: 16,
@@ -491,39 +534,18 @@ createMeeting();
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: ParticipantTile(
-                                      participant: remoteParticipants.first,
+                                      key: Key(_room.localParticipant.id),
+                                      participant: local,
+                                      //   participant: remoteParticipants.first,
                                       smallView: true,
                                     ),
                                   ),
                                 ),
-                              )
-                            else
-                              Positioned(
-                                top: 16,
-                                left: 16,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                      width: 150,
-                                      height: 180,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        border: Border.all(
-                                            color: AppTheme.backGround),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Center(
-                                          child: Text("No Video",
-                                              style: GoogleFonts.rubik(
-                                                  color: AppTheme
-                                                      .whiteBackgroundColor,
-                                                  fontSize: 12,
-                                                  fontWeight:
-                                                      FontWeight.w500)))),
-                                ),
                               ),
+                           
+                            
                             Positioned(
-                                top: 16,
+                                bottom: 22,
                                 right: 16,
                                 child: Column(
                                   children: [
@@ -797,20 +819,23 @@ createMeeting();
                                     // )
                                   ],
                                 )),
-                            Positioned(
-                              bottom: 20,
-                              right: 20,
-                              child: Container(
-                                height: 120,
-                                width: 400,
-                                padding: EdgeInsets.all(10),
-                                child: EcgPlot(ecgData: ecgPoints),
-                              ),
-                            ),
+                            // Positioned(
+                            //   bottom: 20,
+                            //   right: 20,
+                            //   child: Container(
+                            //     height: 120,
+                            //     width: 400,
+                            //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(22)),
+                            //     padding: EdgeInsets.all(10),
+                            //     child: ClipRRect(
+                            //       borderRadius: BorderRadius.circular(12),
+                            //       child: EcgPlot(ecgData: ecgPoints)),
+                            //   ),
+                            // ),
 
                             // Meeting Controls
                             Positioned(
-                              bottom: 20,
+                              bottom: 16,
                               left: 20,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -850,29 +875,53 @@ createMeeting();
                         ),
                       ),
                       SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text("ECG Reading",
+                              style: GoogleFonts.quicksand(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Container(
+                        height: 100,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22)),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: EcgPlot(ecgData: ecgPoints)),
+                      ),
+                      SizedBox(
                         height: 20,
                       ),
                       Row(
                         children: [
-                          Expanded(
-                            child: InputTextFieldMaxlines(
-                              //  textEditingController: _controller.body1,
-                              hintText: "Medecins:",
-                              counterText: "1000",
+                          // Expanded(
+                          //   child: InputTextFieldMaxlines(
+                          //     //  textEditingController: _controller.body1,
+                          //     hintText: "Medecins:",
+                          //     counterText: "1000",
 
-                              validation: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Required';
-                                }
-                                return null;
-                              },
-                              maxLines: 8,
-                              maxlength: 1000,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
+                          //     validation: (value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return 'Required';
+                          //       }
+                          //       return null;
+                          //     },
+                          //     maxLines: 8,
+                          //     maxlength: 1000,
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   width: 20,
+                          // ),
                           Expanded(
                             child: InputTextFieldMaxlines(
                               //  textEditingController: _controller.body1,

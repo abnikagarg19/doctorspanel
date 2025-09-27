@@ -21,8 +21,10 @@ class EcgPlot extends StatelessWidget {
         maxX: ecgData.isNotEmpty ? ecgData.last.x : 1000,
         // minY: -5000, // set a fixed ECG range
         // maxY: 5000,
+        
         gridData: FlGridData(show: true),
-        borderData: FlBorderData(show: true),
+      
+        borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -37,6 +39,7 @@ class EcgPlot extends StatelessWidget {
             dotData: FlDotData(show: false),
             color: const Color.fromARGB(255, 3, 84, 236),
             barWidth: 2,
+            
             belowBarData: BarAreaData(show: false),
           ),
         ],
